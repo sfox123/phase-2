@@ -9,7 +9,6 @@ import Status from './screens/Status';
 import BeneficiaryDetails from './screens/BenDetails';
 import CartPage from './screens/CartPage';
 import {NavigationContainer} from '@react-navigation/native';
-import Loading from './screens/Loading';
 import LanguageSelectionScreen from './screens/Lang';
 import Other from './screens/Other';
 import {Alert, StatusBar} from 'react-native';
@@ -106,21 +105,6 @@ function App() {
         console.log('PRINTER ERROR');
       }
       paired = [];
-      // if (paired.length > 0) {
-      //   for (const [deviceId, device] of paired) {
-      //     if (device.name === "DPP-250") {
-      //       activeId = device.id;
-      //       activeId = device.id.toString();
-      //       setActivedeviceId(activeId);
-      //       console.log("activedeviceId:", activeId);
-      //       if (activeId) {
-      //         connectPrinter(activeId);
-      //       }
-      //     }
-      //   }
-      // } else {
-      //   console.log("No paired devices found.");
-      // }
     } catch (error) {
       if (error.message === 'EVENT_BLUETOOTH_NOT_SUPPORT') {
         Alert.alert(
@@ -137,7 +121,7 @@ function App() {
   const enableBluetoothInBackground = () => {
     const interval = setInterval(() => {
       console.log('Sending printer wake up signal');
-      BluetoothEnable();
+      // BluetoothEnable();
     }, 5 * 8000);
     return () => {
       clearInterval(interval);
@@ -170,16 +154,6 @@ function App() {
   return (
     <NavigationContainer>
       <Stack.Navigator>
-        <Stack.Screen name="Loading" options={{headerShown: false}}>
-          {props => (
-            <Loading
-              {...props}
-              lang={language}
-              retailerId={retailerId}
-              setLanguage={setLanguage}
-            />
-          )}
-        </Stack.Screen>
         <Stack.Screen
           name="Home"
           component={Home}

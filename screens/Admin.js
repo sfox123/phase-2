@@ -1,144 +1,151 @@
-import React, { useState, useEffect } from "react";
+import React, {useState} from 'react';
+import QRCodeScanner from 'react-native-qrcode-scanner';
+
 import {
-  StyleSheet,
-  Text,
-  TouchableOpacity,
   View,
-  Animated,
-  ImageBackground,
-  StatusBar,
-} from "react-native";
-import { Button, Icon } from "react-native-elements";
-import AdminLogo from "../assets/admin_logo";
-import { useNavigation } from "@react-navigation/native";
-import LinearGradient from "react-native-linear-gradient";
-import { BlurView } from "@react-native-community/blur";
-
-export default function Admin() {
-  const navigation = useNavigation();
-  const [animation] = useState(new Animated.Value(0));
-
-  useEffect(() => {
-    Animated.timing(animation, {
-      toValue: 1,
-      duration: 1000,
-      useNativeDriver: true,
-    }).start();
-  }, []);
-
-  const logoTranslateY = animation.interpolate({
-    inputRange: [0, 1],
-    outputRange: [-200, 0],
-  });
-
-  const buttonsTranslateY = animation.interpolate({
-    inputRange: [0, 1],
-    outputRange: [-100, 0],
-  });
-
-  return (
-    <View style={styles.container}>
-      <StatusBar barStyle="light-content" />
-      <BlurView
-        style={StyleSheet.absoluteFill}
-        blurType="light"
-        blurAmount={10}
-      >
-        <LinearGradient
-          colors={["#FFC371", "#FF5F6D"]}
-          start={{ x: 0, y: 0 }}
-          end={{ x: 1, y: 1 }}
-          style={styles.gradient}
-        />
-        <Animated.View
-          style={[
-            styles.logoContainer,
-            { transform: [{ translateY: logoTranslateY }] },
-          ]}
-        >
-          <AdminLogo />
-        </Animated.View>
-        <Animated.View
-          style={[
-            styles.buttonContainer,
-            { transform: [{ translateY: buttonsTranslateY }] },
-          ]}
-        >
-          <TouchableOpacity
-            style={styles.button}
-            onPress={() => navigation.navigate("Scanner")}
-          >
-            <Icon
-              style={{ marginRight: 10 }}
-              color={"white"}
-              name="user"
-              type="font-awesome"
-            />
-            <Text style={{ color: "white", fontSize: 20 }}>Sign In</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={[styles.button, { marginTop: 20 }]}
-            title="Pin"
-            onPress={() => navigation.navigate("Status")}
-          >
-            <Icon
-              style={{ marginRight: 10 }}
-              color={"white"}
-              name="gears"
-              type="font-awesome"
-            />
-            <Text style={{ color: "white", fontSize: 20 }}>Status</Text>
-          </TouchableOpacity>
-        </Animated.View>
-      </BlurView>
-    </View>
-  );
-}
+  TextInput,
+  Button,
+  Text,
+  StyleSheet,
+  Alert,
+  Switch,
+} from 'react-native';
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#f5fcff',
   },
-  backgroundImage: {
-    flex: 1,
-    resizeMode: "cover",
+  headerText: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    marginBottom: 20,
   },
-  gradient: {
-    ...StyleSheet.absoluteFillObject,
+  switchContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginBottom: 20,
   },
-  logoContainer: {
-    width: 200,
-    alignItems: "center",
-    alignSelf: "center",
-    marginTop: 10,
+  qrScanner: {
+    height: 200,
+    width: '100%',
+    marginBottom: 20,
   },
-  buttonContainer: {
-    alignItems: "center",
+  input: {
+    width: '80%',
+    height: 40,
+    borderColor: 'gray',
+    borderWidth: 1,
+    marginBottom: 10,
+    padding: 10,
   },
   button: {
-    alignItems: "center",
-    backgroundColor: "#007AFF",
-    borderRadius: 30,
-    width: 250,
-    color: "white",
-    height: 80,
-    display: "flex",
-    flexDirection: "row",
-    justifyContent: "center",
-    marginBottom: 20,
-    shadowColor: "#000",
-    shadowOffset: {
-      width: 0,
-      height: 4,
-    },
-    shadowOpacity: 0.3,
-    shadowRadius: 4.65,
-    elevation: 8,
-  },
-  buttonText: {
-    color: "#007AFF",
-    fontSize: 16,
-    fontWeight: "bold",
-    marginTop: 10,
+    width: '80%',
+    backgroundColor: '#841584',
+    color: '#ffffff',
   },
 });
+
+const PinRequest = ({onPinEnter}) => {
+  const [pin, setPin] = useState('');
+
+  const handlePinSubmit = () => {
+    if (pin === '2121212') {
+      onPinEnter(true);
+    } else {
+      Alert.alert('Invalid PIN', 'Please enter the correct PIN.');
+      onPinEnter(false);
+    }
+  };
+
+  return (
+    <View style={styles.container}>
+      <TextInput
+        style={styles.input}
+        value={pin}
+        onChangeText={setPin}
+        placeholder="Enter PIN"
+        secureTextEntry
+      />
+      <Button
+        title="Submit"
+        onPress={handlePinSubmit}
+        color={styles.button.backgroundColor}
+      />
+    </View>
+  );
+};
+
+const Admin = () => {
+  const [onlineMode, setOnlineMode] = useState(false);
+  const [retailerId, setRetailerId] = useState('');
+  const [showScanner, setShowScanner] = useState(false);
+
+  const handleUpdate = () => {
+    // Update retailer ID
+  };
+
+  const handleScan = e => {
+    // Handle scanned QR code
+    setShowScanner(false);
+  };
+
+  const handleSync = () => {
+    // Sync data
+  };
+
+  return (
+    <View style={styles.container}>
+      <Text style={styles.headerText}>Admin Dashboard</Text>
+
+      <View style={styles.switchContainer}>
+        <Text>Online Mode:</Text>
+        <Switch
+          value={onlineMode}
+          onValueChange={value => setOnlineMode(value)}
+        />
+      </View>
+
+      <TextInput
+        style={styles.input}
+        value={retailerId}
+        onChangeText={setRetailerId}
+        placeholder="Enter Retailer ID"
+      />
+
+      <Button title="Update" onPress={handleUpdate} />
+
+      <Text style={styles.headerText}>Find Beneficiary</Text>
+
+      <Button title="PIN" onPress={() => setShowScanner(true)} />
+
+      {showScanner && (
+        <QRCodeScanner
+          onRead={handleScan}
+          reactivate={true}
+          reactivateTimeout={5000}
+          showMarker={true}
+          markerStyle={{borderColor: 'white'}}
+          cameraStyle={styles.qrScanner}
+        />
+      )}
+
+      <Button title="Sync" onPress={handleSync} />
+    </View>
+  );
+};
+
+const App = () => {
+  const [isAdmin, setIsAdmin] = useState(false);
+
+  const handlePinEnter = isValid => {
+    setIsAdmin(isValid);
+  };
+
+  return isAdmin ? <Admin /> : <PinRequest onPinEnter={handlePinEnter} />;
+};
+
+export default App;

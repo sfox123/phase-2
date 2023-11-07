@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, {useState, useEffect} from 'react';
 import {
   StyleSheet,
   Text,
@@ -6,12 +6,12 @@ import {
   View,
   Animated,
   StatusBar,
-} from "react-native";
-import { Button, Icon } from "react-native-elements";
-import Logo from "../assets/logo";
-import { useNavigation } from "@react-navigation/native";
-import LinearGradient from "react-native-linear-gradient";
-import { BlurView } from "@react-native-community/blur";
+} from 'react-native';
+import Icon from 'react-native-vector-icons/AntDesign';
+import Logo from '../assets/logo';
+import {useNavigation} from '@react-navigation/native';
+import LinearGradient from 'react-native-linear-gradient';
+import {BlurView} from '@react-native-community/blur';
 
 export default function Home() {
   const navigation = useNavigation();
@@ -32,7 +32,7 @@ export default function Home() {
 
   const buttonsTranslateY = animation.interpolate({
     inputRange: [0, 1],
-    outputRange: [-100, 0],
+    outputRange: [-100, 400],
   });
 
   return (
@@ -41,114 +41,97 @@ export default function Home() {
       <BlurView
         style={StyleSheet.absoluteFill}
         blurType="light"
-        blurAmount={10}
-      >
+        blurAmount={10}>
         <LinearGradient
-          colors={["#87CEFA", "#87CEEB"]}
-          start={{ x: 0, y: 0 }}
-          end={{ x: 1, y: 1 }}
+          colors={['#007AFF', '#800080']}
+          start={{x: 0, y: 0}}
+          end={{x: 1, y: 1}}
           style={styles.gradient}
         />
         <Animated.View
           style={[
             styles.logoContainer,
-            { transform: [{ translateY: logoTranslateY }] },
-          ]}
-        >
+            {transform: [{translateY: logoTranslateY}]},
+          ]}>
           <Logo />
         </Animated.View>
         <Animated.View
           style={[
-            styles.buttonContainer,
-            { transform: [{ translateY: buttonsTranslateY }] },
-          ]}
-        >
+            styles.contentContainer,
+            {transform: [{translateY: buttonsTranslateY}]},
+          ]}>
           <TouchableOpacity
             style={styles.button}
-            onPress={() => navigation.navigate("Scanner")}
-          >
+            onPress={() => navigation.navigate('Scanner')}>
             <Icon
-              style={{ marginRight: 10 }}
-              color={"white"}
+              style={{marginRight: 10}}
+              size={30}
+              color="#fff"
               name="qrcode"
-              type="font-awesome"
             />
-            <Text style={{ color: "white", fontSize: 20 }}>Scan QR</Text>
+            <Text style={{color: 'white', fontSize: 20}}>Scan QR</Text>
           </TouchableOpacity>
           <TouchableOpacity
-            style={[styles.button, { marginTop: 20 }]}
+            style={[styles.button, {marginTop: 20}]}
             title="Pin"
-            onPress={() => navigation.navigate("Pin")}
-          >
+            onPress={() => navigation.navigate('Pin')}>
             <Icon
-              style={{ marginRight: 10 }}
-              color={"white"}
+              style={{marginRight: 10}}
+              size={30}
+              color="#fff"
               name="lock"
               type="font-awesome"
             />
-            <Text style={{ color: "white", fontSize: 20 }}>Enter PIN</Text>
+            <Text style={{color: 'white', fontSize: 20}}>Enter PIN</Text>
           </TouchableOpacity>
           <TouchableOpacity
-            style={[
-              styles.button,
-              { marginTop: 20, backgroundColor: "red" },
-              {
-                width: 105,
-                height: 50,
-                borderRadius: 15,
-                alignSelf: "flex-start",
-                marginBottom: 5,
-                marginLeft: 15,
-                marginTop: 130,
-              },
-            ]}
-            onPress={() => navigation.navigate("Admin")}
-          >
+            style={styles.adminButton}
+            onPress={() => navigation.navigate('Admin')}>
             <Icon
-              style={{ marginRight: 10 }}
-              color={"white"}
+              style={{marginRight: 10}}
+              size={20}
+              color="#fff"
               name="key"
               type="font-awesome"
             />
-            <Text style={{ color: "white", fontSize: 15 }}>Admin</Text>
+            <Text style={{color: 'white', fontSize: 15}}>Admin</Text>
           </TouchableOpacity>
         </Animated.View>
       </BlurView>
     </View>
   );
 }
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-  },
-  backgroundImage: {
-    flex: 1,
-    resizeMode: "cover",
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   gradient: {
     ...StyleSheet.absoluteFillObject,
   },
   logoContainer: {
-    width: 200,
-    alignItems: "center",
-    alignSelf: "center",
-    marginTop: 10,
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
-  buttonContainer: {
-    alignItems: "center",
+  contentContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   button: {
-    alignItems: "center",
-    backgroundColor: "#007AFF",
+    alignItems: 'center',
+    backgroundColor: '#007AFF',
     borderRadius: 30,
     width: 250,
-    color: "white",
     height: 80,
-    display: "flex",
-    flexDirection: "row",
-    justifyContent: "center",
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'center',
     marginBottom: 20,
-    shadowColor: "#000",
+    shadowColor: '#000',
     shadowOffset: {
       width: 0,
       height: 4,
@@ -157,10 +140,16 @@ const styles = StyleSheet.create({
     shadowRadius: 4.65,
     elevation: 8,
   },
-  buttonText: {
-    color: "#007AFF",
-    fontSize: 16,
-    fontWeight: "bold",
-    marginTop: 10,
+  adminButton: {
+    position: 'absolute',
+    right: 15,
+    bottom: 15,
+    backgroundColor: 'red',
+    width: 105,
+    height: 50,
+    borderRadius: 15,
+    alignItems: 'center',
+    justifyContent: 'center',
+    flexDirection: 'row',
   },
 });

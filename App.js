@@ -15,22 +15,14 @@ import {Alert, StatusBar} from 'react-native';
 import {DeviceEventEmitter} from 'react-native';
 const Stack = createStackNavigator();
 import {BluetoothManager} from 'react-native-bluetooth-escpos-printer';
-import {
-  connectPrinter,
-  requestBluetoothConnectPermission,
-} from './api/btprinter';
-
-let activeId = null;
-const retailerId = ''; //retailer ID goes here
+import {connectPrinter} from './api/btprinter';
 
 function App() {
   const [cartItems, setCartItems] = useState([]);
-  const [pairedDevices, setpairedDevices] = useState([]);
   const [selectedBeneficiary, setSelectedBeneficiary] = useState(null);
   const [language, setLanguage] = useState('tam');
   const [retailer, setRetailer] = useState(null);
-  const [isScanning, setIsScanning] = useState(false);
-  const [activedeviceId, setActivedeviceId] = useState(null);
+  const [mode, setMode] = useState('online');
 
   StatusBar.setTranslucent(true);
   StatusBar.setBackgroundColor('rgba(0, 0, 0, 0.2)');
@@ -57,7 +49,7 @@ function App() {
         // Handle device discovery done
         console.log('Device discovery done');
         // You can emit a custom event or perform any necessary actions here
-        setIsScanning(false);
+        // setIsScanning(false);
       },
     );
 
@@ -96,9 +88,6 @@ function App() {
           }
         }
       }
-      console.log('Paired devices:', paired);
-      console.log(paired[0].address);
-      activeId = paired[0].address;
       try {
         connectPrinter(paired[0].address);
       } catch (error) {
@@ -121,7 +110,7 @@ function App() {
   const enableBluetoothInBackground = () => {
     const interval = setInterval(() => {
       console.log('Sending printer wake up signal');
-      // BluetoothEnable();
+      BluetoothEnable();
     }, 5 * 8000);
     return () => {
       clearInterval(interval);
@@ -132,10 +121,12 @@ function App() {
     enableBluetoothInBackground(); // Start running BluetoothEnable in the background
   }, []);
 
+  //setting parameters for offline mode
   useEffect(() => {
     const getLanguage = async () => {
       try {
         const lang = await AsyncStorage.getItem('selectedLanguage');
+        const onlineMode = await AsyncStorage.getItem('isOnline');
         const retailerCache = await AsyncStorage.getItem('retailer');
         console.log(retailerCache);
         if (lang !== null) {
@@ -143,6 +134,9 @@ function App() {
         }
         if (retailer !== null) {
           setRetailer(retailerCache);
+        }
+        if (onlineMode !== null) {
+          setMode(onlineMode);
         }
       } catch (error) {
         console.error(error);
@@ -163,7 +157,7 @@ function App() {
           {props => (
             <Pin
               {...props}
-              retailerId={retailerId}
+              retailerId={retailer}
               setSelectedBeneficiary={setSelectedBeneficiary}
             />
           )}
@@ -172,8 +166,10 @@ function App() {
           {props => (
             <Admin
               {...props}
-              retailerId={retailerId}
-              setSelectedBeneficiary={setSelectedBeneficiary}
+              mode={mode}
+              setMode={setMode}
+              retailer={retailer}
+              setRetailer={setRetailer}
             />
           )}
         </Stack.Screen>
@@ -181,7 +177,7 @@ function App() {
           {props => (
             <Status
               {...props}
-              retailerId={retailerId}
+              retailerId={retailer}
               setSelectedBeneficiary={setSelectedBeneficiary}
             />
           )}
@@ -190,7 +186,7 @@ function App() {
           {props => (
             <Scanner
               {...props}
-              retailerId={retailerId}
+              retailerId={retailer}
               setSelectedBeneficiary={setSelectedBeneficiary}
             />
           )}
@@ -202,7 +198,7 @@ function App() {
               cartItems={cartItems}
               setSelectedBeneficiary={setSelectedBeneficiary}
               setCartItems={setCartItems}
-              retailerId={retailerId}
+              retailerId={retailer}
               selectedBeneficiary={selectedBeneficiary}
               handleRemoveFromCart={handleRemoveFromCart}
             />
@@ -240,5 +236,3 @@ function App() {
 }
 
 export default App;
-
-export {activeId, retailerId};

@@ -43,7 +43,7 @@ export default function CartPage({
   const [isLoading, setIsLoading] = useState(false);
   const [loadingState, setloadingState] = useState('Processing');
   const [isSuccess, setIsSuccess] = useState(false);
-  const [assignedRetailer, setAssignedRetailer] = useState(null);
+  const [assignedRetailer, setAssignedRetailer] = useState({name: 'baskar'});
   const [items, setItems] = useState([]);
   const [isReceiptPrinted, setIsReceiptPrinted] = useState(false);
   const [checkoutInitiated, setCheckoutInitiated] = useState(false);
@@ -395,7 +395,7 @@ export default function CartPage({
           {},
         );
         // Check if assignedRetailer.name is null and provide a default value
-        console.log('Retailer name ', assignedRetailer.name);
+        // console.log('Retailer name ', assignedRetailer.name);
         //const retailerName = assignedRetailer.name ? assignedRetailer.name : "n/a";
         BluetoothEscposPrinter.printText('Retailer: TEST' + '\n\r', {});
 

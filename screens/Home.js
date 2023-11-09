@@ -86,7 +86,7 @@ export default function Home() {
           </TouchableOpacity>
           <TouchableOpacity
             style={styles.adminButton}
-            onPress={() => navigation.navigate('Admin')}>
+            onPress={() => navigation.navigate('AdminPin')}>
             <Icon
               style={{marginRight: 10}}
               size={20}

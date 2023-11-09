@@ -16,13 +16,14 @@ import {DeviceEventEmitter} from 'react-native';
 const Stack = createStackNavigator();
 import {BluetoothManager} from 'react-native-bluetooth-escpos-printer';
 import {connectPrinter} from './api/btprinter';
+import AdminPin from './screens/AdminPin';
 
 function App() {
   const [cartItems, setCartItems] = useState([]);
   const [selectedBeneficiary, setSelectedBeneficiary] = useState(null);
   const [language, setLanguage] = useState('tam');
-  const [retailer, setRetailer] = useState(null);
-  const [mode, setMode] = useState('online');
+  const [retailer, setRetailer] = useState('');
+  const [mode, setMode] = useState(false);
 
   StatusBar.setTranslucent(true);
   StatusBar.setBackgroundColor('rgba(0, 0, 0, 0.2)');
@@ -134,6 +135,7 @@ function App() {
         }
         if (retailer !== null) {
           setRetailer(retailerCache);
+          console.log(retailer);
         }
         if (onlineMode !== null) {
           setMode(onlineMode);
@@ -172,6 +174,9 @@ function App() {
               setRetailer={setRetailer}
             />
           )}
+        </Stack.Screen>
+        <Stack.Screen name="AdminPin">
+          {props => <AdminPin {...props} />}
         </Stack.Screen>
         <Stack.Screen name="Status">
           {props => (

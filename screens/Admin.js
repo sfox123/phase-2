@@ -50,7 +50,8 @@ const Admin = ({mode, retailer, setMode, setRetailer, BenCache}) => {
         }
         setRetailer(inputRetailer);
       }
-      if (online !== mode) {
+      if (online === true) {
+        setMode(online);
         await AsyncStorage.removeItem('isOnline');
         await AsyncStorage.setItem('isOnline', JSON.stringify(online));
       }

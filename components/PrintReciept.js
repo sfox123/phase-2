@@ -1,5 +1,5 @@
 import {BluetoothEscposPrinter} from 'react-native-bluetooth-escpos-printer';
-
+import items from '../api/comodities';
 const handlePrintReceipt = async (cartItems, pin) => {
   const selectedBeneficiary = pin;
   try {
@@ -7,7 +7,6 @@ const handlePrintReceipt = async (cartItems, pin) => {
     const currentDate = new Date().toLocaleString('en-US', {
       timeZone: 'Asia/Colombo', // Set the time zone to Sri Lanka
     });
-    
 
     // Use the "amount" in your code as needed
 
@@ -100,10 +99,9 @@ const handlePrintReceipt = async (cartItems, pin) => {
       // Loop through cart items and print each item's details, including the unit and amount
       cartItems.forEach(item => {
         // const itemEng =
-        //   items.find(i => i.tam === item.name) ||
-        //   items.find(i => i.sin === item.name);
-        // const itemName = itemEng ? itemEng.eng || itemEng.sin : item.name;
-        const itemName = item.name;
+        items.find(i => i.tam === item.name) ||
+          items.find(i => i.sin === item.name);
+        const itemName = itemEng ? itemEng.eng || itemEng.sin : item.name;
         const unit = item.unit || '';
         const itemquantity = Number(item.Rquantity) * Number(item.quantity);
         const amount = (item.price * item.quantity).toFixed(2); // Calculate the total amount for the item

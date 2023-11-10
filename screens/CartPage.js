@@ -24,11 +24,11 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import {StatusBar} from 'react-native';
 import {connectPrinter} from '../api/btprinter';
 import {BluetoothEscposPrinter} from 'react-native-bluetooth-escpos-printer';
-let retailerId = '0002';
 
 export default function CartPage({
   selectedBeneficiary,
   retailer,
+  retailerId,
   cartItems,
   mode,
   benData,
@@ -410,7 +410,7 @@ export default function CartPage({
             </View>
           ) : (
             <Text style={styles.checkoutText}>
-              {checkoutInitiated ? 'Reprint/Merchant Copy' : 'Checkout & Print'}
+              {checkoutInitiated ? 'Reprint/Retailer Copy' : 'Checkout & Print'}
             </Text>
           )}
         </TouchableOpacity>

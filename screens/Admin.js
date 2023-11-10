@@ -17,7 +17,7 @@ import {
   ActivityIndicator,
 } from 'react-native';
 
-const Admin = ({mode, retailer, setMode, setRetailer, benData}) => {
+const Admin = ({mode, retailer, setMode, setRetailer, BenCache}) => {
   const [showScanner, setShowScanner] = useState(false);
   const [pin, setPin] = useState('');
   const [inputRetailer, setRetailerInput] = useState('');
@@ -29,14 +29,12 @@ const Admin = ({mode, retailer, setMode, setRetailer, benData}) => {
 
   useEffect(() => {
     const handleBenListOff = async () => {
-      benData.filter(item => {
+      BenCache.filter(item => {
         if (item.uploaded === false) {
           setOfflineBen([...offlineBen, item]);
         }
       });
     };
-    setOnline(mode);
-    setRetailerInput(retailer);
     handleBenListOff();
     console.log(offlineBen);
   }, []);

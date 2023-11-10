@@ -1,9 +1,10 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import QRCodeScanner from 'react-native-qrcode-scanner';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import api from '../api/api';
 import handlePrintReceipt from '../components/PrintReciept';
-
+import data from '../api/data.json';
+ 
 import {
   View,
   TextInput,
@@ -13,9 +14,163 @@ import {
   Alert,
   Switch,
   ActivityIndicator,
-  TouchableOpacity,
 } from 'react-native';
-
+ 
+const Admin = ({mode, retailer, setMode, setRetailer}) => {
+  const [showScanner, setShowScanner] = useState(false);
+  const [pin, setPin] = useState('');
+  const [inputRetailer, setRetailerInput] = useState('');
+  const [online, setOnline] = useState(false);
+  const [beneficiary, setBeneficiary] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+ 
+  useEffect(() => {
+    setOnline(mode);
+  }, []);
+ 
+  const handleUpdate = async () => {
+    // Update retailer ID
+    const BenCache = [];
+    try {
+      if (retailer !== inputRetailer) {
+        await AsyncStorage.removeItem('retailer');
+        await AsyncStorage.setItem('retailer', inputRetailer);
+        setRetailer(inputRetailer);
+        if (online) {
+          data.map(async (item, index) => {
+            if (item.retailerAssigned == inputRetailer) {
+              BenCache.push(item);
+              console.log(item);
+            }
+          });
+          await AsyncStorage.setItem('benCache', JSON.stringify(BenCache));
+        }
+        setRetailer(inputRetailer);
+      }
+      if (online !== mode) {
+        await AsyncStorage.removeItem('isOnline');
+        await AsyncStorage.setItem('isOnline', JSON.stringify(online));
+      }
+      Alert.alert('Retailer ID updated successfully');
+    } catch (error) {
+      console.error(error);
+      Alert.alert('Error updating retailer ID');
+    }
+  };
+ 
+  const handlePrintCycle = async e => {
+    const cycle = (await api.get(`/beneficiary/${pin}/cycle/${e}`)).data;
+    console.log('Printing receipt');
+    handlePrintReceipt(cycle, pin);
+    // Print receipt
+  };
+ 
+  const handleRequestPin = async e => {
+    try {
+      const beneficiary = (await api.get(`/beneficiary/${pin}`)).data;
+      setBeneficiary(beneficiary);
+      console.log(beneficiary);
+    } catch (error) {
+      setError('Error finding beneficiary');
+    }
+    setLoading(false);
+    setShowScanner(false);
+    // Handle scanned QR code
+  };
+  const handleRequestQR = async e => {
+    try {
+      const beneficiary = (await api.get(`/beneficiary/${e.data}`)).data;
+    } catch (error) {
+      Alert.alert('Error finding beneficiary');
+    }
+    // Handle scanned QR code
+    setShowScanner(false);
+  };
+ 
+  const handleSync = async () => {
+    const das = await AsyncStorage.getItem('benCache');
+    console.log(online);
+  };
+ 
+  return (
+    <View style={styles.container}>
+      <Text style={styles.headerText}>Admin Dashboard</Text>
+ 
+      <View style={styles.switchContainer}>
+        <Text>Offline Mode:</Text>
+        <Switch value={online} onValueChange={setOnline} />
+      </View>
+      <View style={styles.BeneficiaryInputBox}>
+        <TextInput
+          style={styles.input}
+          value={inputRetailer}
+          onChangeText={setRetailerInput}
+          placeholder={retailer !== null ? retailer : 'Enter Retailer ID'}
+        />
+        <Button title="Update" onPress={handleUpdate} />
+ 
+        <Text style={styles.headerText}>Find Beneficiary</Text>
+        <View style={{marginBottom: 20}}>
+          <TextInput
+            style={styles.input}
+            value={pin}
+            onChangeText={setPin}
+            placeholder={'PIN'}
+          />
+          <Button title="Enter PIN" onPress={handleRequestPin} />
+        </View>
+        <Button title="Scan QR Code" onPress={() => setShowScanner(true)} />
+        {showScanner && (
+          <QRCodeScanner
+            onRead={handleRequestQR}
+            reactivate={true}
+            reactivateTimeout={5000}
+            showMarker={true}
+            markerStyle={{borderColor: 'white'}}
+            cameraStyle={styles.qrScanner}
+          />
+        )}
+      </View>
+ 
+      {loading ? (
+        <ActivityIndicator size="large" color="#000" />
+      ) : error ? (
+        <Text style={styles.errorText}>{error}</Text>
+      ) : (
+        beneficiary && (
+          <View style={styles.beneficiaryDetails}>
+            <Text style={styles.beneficiaryText}>
+              Name: {beneficiary.lastName}
+            </Text>
+            <Text style={styles.beneficiaryText}>NIC: {beneficiary.NIC}</Text>
+            <Text style={styles.beneficiaryText}>
+              GN Division: {beneficiary.gnDivision}
+            </Text>
+ 
+            <Text style={styles.headerText}>Cycle</Text>
+            {beneficiary.cycle.map((cycle, index) => (
+              <View key={index} style={styles.cycleContainer}>
+                <Text style={styles.cycleText}>
+                  Cycle {index + 1}: {cycle.amount}
+                </Text>
+                {cycle.amount !== 17500 && (
+                  <Button
+                    title={`Print Receipt Cycle ${index + 1}`}
+                    onPress={() => handlePrintCycle(index)}
+                    style={styles.printReceiptButton}
+                  />
+                )}
+              </View>
+            ))}
+          </View>
+        )
+      )}
+      <Button title="Sync" onPress={handleSync} />
+    </View>
+  );
+};
+ 
 const styles = StyleSheet.create({
   Pincontainer: {
     flex: 1,
@@ -87,187 +242,5 @@ const styles = StyleSheet.create({
     color: '#ffffff',
   },
 });
-
-const PinRequest = ({onPinEnter}) => {
-  const [pin, setPin] = useState('');
-
-  const handlePinSubmit = () => {
-    if (pin === '2121212') {
-      onPinEnter(true);
-    } else {
-      Alert.alert('Invalid PIN', 'Please enter the correct PIN.');
-      onPinEnter(false);
-    }
-  };
-
-  return (
-    <View style={styles.Pincontainer}>
-      <TextInput
-        style={styles.input}
-        value={pin}
-        onChangeText={setPin}
-        placeholder="Enter PIN"
-        secureTextEntry
-      />
-      <Button
-        title="Submit"
-        onPress={handlePinSubmit}
-        color={styles.button.backgroundColor}
-      />
-    </View>
-  );
-};
-
-// const onlineMode = await AsyncStorage.getItem('isOnline');
-// const retailerCache = await AsyncStorage.getItem('retailer');
-
-const Admin = ({mode, setMode, retailer, setRetailer}) => {
-  const [showScanner, setShowScanner] = useState(false);
-  const [pin, setPin] = useState('');
-  const [beneficiary, setBeneficiary] = useState(false);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
-
-  const handleUpdate = async () => {
-    // Update retailer ID
-    try {
-      await AsyncStorage.setItem('retailer', retailer);
-      setRetailer(retailer);
-      Alert.alert('Retailer ID updated successfully');
-    } catch (error) {
-      console.error(error);
-      Alert.alert('Error updating retailer ID');
-    }
-  };
-
-  const handlePrintReceipt = async e => {
-    const cycle = (await api.get(`/beneficiary/${pin}/cycle/${e}`)).data;
-    console.log('Printing receipt');
-    handlePrintReceipt(cycle);
-    // Print receipt
-  };
-
-  const handleRequestPin = async e => {
-    try {
-      const beneficiary = (await api.get(`/beneficiary/${pin}`)).data;
-      setBeneficiary(beneficiary);
-      console.log(beneficiary);
-    } catch (error) {
-      setError('Error finding beneficiary');
-    }
-    setLoading(false);
-    setShowScanner(false);
-    // Handle scanned QR code
-  };
-  const handleRequestQR = async e => {
-    try {
-      const beneficiary = (await api.get(`/beneficiary/${e.data}`)).data;
-    } catch (error) {
-      Alert.alert('Error finding beneficiary');
-    }
-    // Handle scanned QR code
-    setShowScanner(false);
-  };
-
-  const handleSync = () => {
-    // Sync data
-  };
-
-  return (
-    <View style={styles.container}>
-      <Text style={styles.headerText}>Admin Dashboard</Text>
-
-      <View style={styles.switchContainer}>
-        <Text>Offline Mode:</Text>
-        <Switch value={mode} onValueChange={value => setMode(value)} />
-      </View>
-      <View style={styles.BeneficiaryInputBox}>
-        <TextInput
-          style={styles.input}
-          value={retailer}
-          onChangeText={setRetailer}
-          placeholder={retailer !== null ? retailer : 'Enter Retailer ID'}
-        />
-        <Button title="Update" onPress={handleUpdate} />
-
-        <Text style={styles.headerText}>Find Beneficiary</Text>
-        <View style={{marginBottom: 20}}>
-          <TextInput
-            style={styles.input}
-            value={pin}
-            onChangeText={setPin}
-            placeholder={'PIN'}
-          />
-          <Button title="Enter PIN" onPress={handleRequestPin} />
-        </View>
-        <Button title="Scan QR Code" onPress={() => setShowScanner(true)} />
-        {showScanner && (
-          <QRCodeScanner
-            onRead={handleRequestQR}
-            reactivate={true}
-            reactivateTimeout={5000}
-            showMarker={true}
-            markerStyle={{borderColor: 'white'}}
-            cameraStyle={styles.qrScanner}
-          />
-        )}
-      </View>
-
-      {loading ? (
-        <ActivityIndicator size="large" color="#000" />
-      ) : error ? (
-        <Text style={styles.errorText}>{error}</Text>
-      ) : (
-        beneficiary && (
-          <View style={styles.beneficiaryDetails}>
-            <Text style={styles.beneficiaryText}>
-              Name: {beneficiary.lastName}
-            </Text>
-            <Text style={styles.beneficiaryText}>NIC: {beneficiary.NIC}</Text>
-            <Text style={styles.beneficiaryText}>
-              GN Division: {beneficiary.gnDivision}
-            </Text>
-
-            <Text style={styles.headerText}>Cycle</Text>
-            {beneficiary.cycle.map((cycle, index) => (
-              <View key={index} style={styles.cycleContainer}>
-                <Text style={styles.cycleText}>
-                  Cycle {index + 1}: {cycle.amount}
-                </Text>
-                {cycle.amount !== 17500 && (
-                  <Button
-                    title={`Print Receipt Cycle ${index + 1}`}
-                    onPress={() => handlePrintReceipt(index)}
-                    style={styles.printReceiptButton}
-                  />
-                )}
-              </View>
-            ))}
-          </View>
-        )
-      )}
-      <Button title="Sync" onPress={handleSync} />
-    </View>
-  );
-};
-
-const App = ({mode, setMode, retailer, setRetailer}) => {
-  const [isAdmin, setIsAdmin] = useState(false);
-
-  const handlePinEnter = isValid => {
-    setIsAdmin(isValid);
-  };
-
-  return isAdmin ? (
-    <Admin
-      mode={mode}
-      setMode={setMode}
-      retailer={retailer}
-      setRetailer={setRetailer}
-    />
-  ) : (
-    <PinRequest onPinEnter={handlePinEnter} />
-  );
-};
-
-export default App;
+ 
+export default Admin;

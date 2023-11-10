@@ -15,6 +15,7 @@ import {
   Alert,
   Switch,
   ActivityIndicator,
+  ScrollView,
 } from 'react-native';
 
 const Admin = ({mode, retailer, setMode, setRetailer, BenCache}) => {
@@ -51,6 +52,11 @@ const Admin = ({mode, retailer, setMode, setRetailer, BenCache}) => {
         setRetailer(inputRetailer);
       }
       if (online === true) {
+        setMode(online);
+        await AsyncStorage.removeItem('isOnline');
+        await AsyncStorage.setItem('isOnline', JSON.stringify(online));
+      }
+      if (online === false) {
         setMode(online);
         await AsyncStorage.removeItem('isOnline');
         await AsyncStorage.setItem('isOnline', JSON.stringify(online));
@@ -111,86 +117,88 @@ const Admin = ({mode, retailer, setMode, setRetailer, BenCache}) => {
   };
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.headerText}>Admin Dashboard</Text>
+    <ScrollView>
+      <View style={styles.container}>
+        <Text style={styles.headerText}>Admin Dashboard</Text>
 
-      <View style={styles.switchContainer}>
-        <Text>Offline Mode:</Text>
-        <Switch value={online} onValueChange={setOnline} />
-      </View>
-      <View style={styles.BeneficiaryInputBox}>
-        <TextInput
-          style={styles.input}
-          value={inputRetailer}
-          onChangeText={setRetailerInput}
-          placeholder={retailer !== null ? retailer : 'Enter Retailer ID'}
-        />
-        <Button title="Update" onPress={handleUpdate} />
-
-        <Text style={styles.headerText}>Find Beneficiary</Text>
-        <View style={{marginBottom: 20}}>
+        <View style={styles.switchContainer}>
+          <Text>Offline Mode:</Text>
+          <Switch value={online} onValueChange={setOnline} />
+        </View>
+        <View style={styles.BeneficiaryInputBox}>
           <TextInput
             style={styles.input}
-            value={pin}
-            onChangeText={setPin}
-            placeholder={'PIN'}
+            value={inputRetailer}
+            onChangeText={setRetailerInput}
+            placeholder={retailer !== null ? retailer : 'Enter Retailer ID'}
           />
-          <Button title="Enter PIN" onPress={handleRequestPin} />
-        </View>
-        <Button title="Scan QR Code" onPress={() => setShowScanner(true)} />
-        {showScanner && (
-          <QRCodeScanner
-            onRead={handleRequestQR}
-            reactivate={true}
-            reactivateTimeout={5000}
-            showMarker={true}
-            markerStyle={{borderColor: 'white'}}
-            cameraStyle={styles.qrScanner}
-          />
-        )}
-      </View>
+          <Button title="Update" onPress={handleUpdate} />
 
-      {loading ? (
-        <ActivityIndicator size="large" color="#000" />
-      ) : error ? (
-        <Text style={styles.errorText}>{error}</Text>
-      ) : (
-        beneficiary && (
-          <View style={styles.beneficiaryDetails}>
-            <Text style={styles.beneficiaryText}>
-              Name: {beneficiary.lastName}
-            </Text>
-            <Text style={styles.beneficiaryText}>NIC: {beneficiary.NIC}</Text>
-            <Text style={styles.beneficiaryText}>
-              GN Division: {beneficiary.gnDivision}
-            </Text>
-
-            <Text style={styles.headerText}>Cycle</Text>
-            {beneficiary.cycle.map((cycle, index) => (
-              <View key={index} style={styles.cycleContainer}>
-                <Text style={styles.cycleText}>
-                  Cycle {index + 1}: {cycle.amount}
-                </Text>
-                {cycle.amount !== 17500 && (
-                  <Button
-                    title={`Print Receipt Cycle ${index + 1}`}
-                    onPress={() => handlePrintCycle(index)}
-                    style={styles.printReceiptButton}
-                  />
-                )}
-              </View>
-            ))}
+          <Text style={styles.headerText}>Find Beneficiary</Text>
+          <View style={{marginBottom: 20}}>
+            <TextInput
+              style={styles.input}
+              value={pin}
+              onChangeText={setPin}
+              placeholder={'PIN'}
+            />
+            <Button title="Enter PIN" onPress={handleRequestPin} />
           </View>
-        )
-      )}
-      <View style={styles.BeneficiaryInputBox}>
-        <Text style={styles.headerText}>
-          Total Offline Beneficiaries: {'213'}
-        </Text>
-        <Button title="Upload" onPress={handleSync} />
-        {loading && <ActivityIndicator size="large" color="#000" />}
+          <Button title="Scan QR Code" onPress={() => setShowScanner(true)} />
+          {showScanner && (
+            <QRCodeScanner
+              onRead={handleRequestQR}
+              reactivate={true}
+              reactivateTimeout={5000}
+              showMarker={true}
+              markerStyle={{borderColor: 'white'}}
+              cameraStyle={styles.qrScanner}
+            />
+          )}
+        </View>
+
+        {loading ? (
+          <ActivityIndicator size="large" color="#000" />
+        ) : error ? (
+          <Text style={styles.errorText}>{error}</Text>
+        ) : (
+          beneficiary && (
+            <View style={styles.beneficiaryDetails}>
+              <Text style={styles.beneficiaryText}>
+                Name: {beneficiary.lastName}
+              </Text>
+              <Text style={styles.beneficiaryText}>NIC: {beneficiary.NIC}</Text>
+              <Text style={styles.beneficiaryText}>
+                GN Division: {beneficiary.gnDivision}
+              </Text>
+
+              <Text style={styles.headerText}>Cycle</Text>
+              {beneficiary.cycle.map((cycle, index) => (
+                <View key={index} style={styles.cycleContainer}>
+                  <Text style={styles.cycleText}>
+                    Cycle {index + 1}: {cycle.amount}
+                  </Text>
+                  {cycle.amount !== 17500 && (
+                    <Button
+                      title={`Print Receipt Cycle ${index + 1}`}
+                      onPress={() => handlePrintCycle(index)}
+                      style={styles.printReceiptButton}
+                    />
+                  )}
+                </View>
+              ))}
+            </View>
+          )
+        )}
+        <View style={styles.BeneficiaryInputBox}>
+          <Text style={styles.headerText}>
+            Total Offline Beneficiaries: {'213'}
+          </Text>
+          <Button title="Upload" onPress={handleSync} />
+          {loading && <ActivityIndicator size="large" color="#000" />}
+        </View>
       </View>
-    </View>
+    </ScrollView>
   );
 };
 

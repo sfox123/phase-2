@@ -67,7 +67,7 @@ export default function Pin({
 
     try {
       if (mode) {
-        const beneficiary = benData.find(ben => ben.id === pin);
+        const beneficiary = benData.find(ben => ben.id == pin);
         if (beneficiary) {
           if (pin === '12345678') {
             ToastAndroid.show(

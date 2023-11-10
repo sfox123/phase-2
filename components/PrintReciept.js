@@ -8,7 +8,8 @@ const handlePrintReceipt = async (
   assignedRetailer,
   orderID,
 ) => {
-  console.log(cartItems);
+  console.log(assignedRetailer);
+
   const selectedBeneficiary = pin;
   try {
     const currentDate = new Date().toLocaleString('en-US', {
@@ -105,7 +106,6 @@ const handlePrintReceipt = async (
 
       // Loop through cart items and print each item's details, including the unit and amount
       cartItems.forEach(item => {
-        console.log(cartItems);
         const itemEng =
           items.find(i => i.tam === item.name) ||
           items.find(i => i.sin === item.name);
@@ -115,7 +115,6 @@ const handlePrintReceipt = async (
             : itemEng && itemEng.sin
             ? itemEng.sin
             : item.name;
-        console.log(itemName);
         const unit = item.unit || '';
         const itemquantity = Number(item.Rquantity) * Number(item.quantity);
         const amount = (item.price * item.quantity).toFixed(2); // Calculate the total amount for the item
@@ -179,25 +178,26 @@ const handlePrintReceipt = async (
       let bal = balance - totalAmount.toFixed(2);
       BluetoothEscposPrinter.printText('Voucher Balance: ' + bal + '\n\r', {});
       // Print printing timestamp and footer
-      if (!assignedRetailer) {
-        assignedRetailer.name = 'N/A';
-        assignedRetailer.gnDivision = 'N/A';
-        assignedRetailer.dsDivision = 'N/A';
-      }
       BluetoothEscposPrinter.printText(
         '--------------------------------\n\r',
         {},
       );
       // Check if assignedRetailer.name is null and provide a default value
-      console.log('Retailer name ', assignedRetailer.name);
+      console.log('Retailer name ', assignedRetailer[0].name);
       //const retailerName = assignedRetailer.name ? assignedRetailer.name : "n/a";
-      BluetoothEscposPrinter.printText('Retailer: TEST' + '\n\r', {});
+      BluetoothEscposPrinter.printText(
+        'Retailer: ' + assignedRetailer[0].name + '\n\r',
+        {},
+      );
 
       // Check if assignedRetailer.gnDivision and assignedRetailer.dsDivision are null and provide default values
       //const gnDivision = assignedRetailer.gnDivision ? assignedRetailer.gnDivision : "n/a";
       //const dsDivision = assignedRetailer.dsDivision ? assignedRetailer.dsDivision : "n/a";
       BluetoothEscposPrinter.printText(
-        'Test DS' + ' - ' + 'Test GN' + '\n\r',
+        assignedRetailer[0].dsDivision +
+          ' - ' +
+          assignedRetailer[0].gnDivision +
+          '\n\r',
         {},
       );
       BluetoothEscposPrinter.printText(

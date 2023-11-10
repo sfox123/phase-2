@@ -74,6 +74,10 @@ const Admin = ({mode, retailer, setMode, setRetailer, BenCache}) => {
   const handlePrintCycle = async e => {
     const cycle = (await api.get(`/beneficiary/${pin}/cycle/${e}`)).data;
     const beneficiary = (await api.get(`/beneficiary/${pin}`)).data;
+    const benRetailer = beneficiary.retailerAssigned;
+    const assignedRetailer = retailerData.filter(retailer => retailer.retailerId === benRetailer);
+    console.log(assignedRetailer)
+
     console.log('Printing receipt');
     const orderID = `REPRINT-CYCLE-${e}`;
     handlePrintReceipt(

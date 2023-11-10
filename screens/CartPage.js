@@ -332,23 +332,23 @@ export default function CartPage({
     setIsSuccess(true);
   };
 
-  useEffect(() => {
-    // Load cartItems and index from cache on mount
-    const loadCartData = async () => {
-      try {
-        const cartData = await AsyncStorage.getItem('cartData');
-        if (cartData != null) {
-          const {cartItems, index} = JSON.parse(cartData);
-          if (index === id) {
-            setCartItems(cartItems);
-          }
-        }
-      } catch (error) {
-        console.error(error);
-      }
-    };
-    loadCartData();
-  }, []);
+  // useEffect(() => {
+  //   // Load cartItems and index from cache on mount
+  //   const loadCartData = async () => {
+  //     try {
+  //       const cartData = await AsyncStorage.getItem('cartData');
+  //       if (cartData != null) {
+  //         const {cartItems, index} = JSON.parse(cartData);
+  //         if (index === id) {
+  //           setCartItems(cartItems);
+  //         }
+  //       }
+  //     } catch (error) {
+  //       console.error(error);
+  //     }
+  //   };
+  //   loadCartData();
+  // }, []);
 
   return (
     <ScrollView style={styles.container}>

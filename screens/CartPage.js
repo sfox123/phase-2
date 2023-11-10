@@ -24,7 +24,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import {StatusBar} from 'react-native';
 import {connectPrinter} from '../api/btprinter';
 import {BluetoothEscposPrinter} from 'react-native-bluetooth-escpos-printer';
-let retailerId = "0002"
+let retailerId = '0002';
 
 export default function CartPage({
   selectedBeneficiary,
@@ -45,8 +45,8 @@ export default function CartPage({
 
   let orderID = null;
 
-  const { currentCycle: { amount: bal } = { amount: 0 } } = selectedBeneficiary ?? {
-    currentCycle: { amount: 0 },
+  const {currentCycle: {amount: bal} = {amount: 0}} = selectedBeneficiary ?? {
+    currentCycle: {amount: 0},
   };
 
   const totalPrice = cartItems.reduce(
@@ -126,7 +126,6 @@ export default function CartPage({
       try {
         const retailers = retailerData;
 
-
         const assignedRetailer = retailers.find(
           retailer => retailer.retailerId === retailerId,
         );
@@ -146,21 +145,30 @@ export default function CartPage({
   }, [retailerId]);
 
   const handleReceipt = async () => {
-    if (!orderID){
+    if (!orderID) {
       orderID = generateOrderID(selectedBeneficiary);
     }
 
     console.log('Order ID:', orderID);
 
     try {
-
       setIsLoading(false);
 
-
       try {
-        console.log(assignedRetailer)
-        handlePrintReceipt(cartItems,  selectedBeneficiary.id, selectedBeneficiary.amount, assignedRetailer, orderID);
-
+        console.log(
+          cartItems,
+          selectedBeneficiary.id,
+          selectedBeneficiary.amount,
+          assignedRetailer,
+          orderID,
+        );
+        handlePrintReceipt(
+          cartItems,
+          selectedBeneficiary.id,
+          selectedBeneficiary.amount,
+          assignedRetailer,
+          orderID,
+        );
       } catch (warning) {
         console.log('Printer Warning', warning);
       }
@@ -219,14 +227,17 @@ export default function CartPage({
             // Make a copy of selectedBeneficiary to avoid direct state mutation
             let selectedBeneficiaryTmp = {...selectedBeneficiary};
 
-            // Modify the itemsPurchased array and the amount key
-            selectedBeneficiaryTmp.itemsPurchased.push({
-              date: new Date(),
-              items: cartItems,
-            });
+            // Replace the itemsPurchased array and update the amount key
+            selectedBeneficiaryTmp.itemsPurchased = [
+              {
+                date: new Date(),
+                cartItems,
+              },
+            ];
             selectedBeneficiaryTmp.amount =
-              totalPrice - selectedBeneficiaryTmp.amount;
+              Number(totalPrice) - Number(selectedBeneficiaryTmp.amount);
             selectedBeneficiaryTmp.uploaded = false;
+
             // Replace the object at the found index with the updated selectedBeneficiary
             benDataTmp[index] = selectedBeneficiaryTmp;
           }

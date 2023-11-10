@@ -146,6 +146,8 @@ function App() {
           setBenData(JSON.parse(BenCache));
         }
         console.log('BenCache', BenCache);
+        console.log('Retailer', retailerCache);
+        console.log('Online Mode', onlineMode);
       } catch (error) {
         console.error(error);
       }

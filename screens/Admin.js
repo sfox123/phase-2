@@ -21,24 +21,14 @@ const Admin = ({mode, retailer, setMode, setRetailer, BenCache}) => {
   const [showScanner, setShowScanner] = useState(false);
   const [pin, setPin] = useState('');
   const [inputRetailer, setRetailerInput] = useState('');
-  const [online, setOnline] = useState(false);
+  const [online, setOnline] = useState(mode);
   const [beneficiary, setBeneficiary] = useState(false);
   const [offlineBen, setOfflineBen] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    const handleBenListOff = async () => {
-      BenCache.filter(item => {
-        if (item.uploaded === false) {
-          setOfflineBen([...offlineBen, item]);
-        }
-      });
-    };
-    setOnline(mode);
-    setRetailerInput(retailer);
-    handleBenListOff();
-    console.log(offlineBen);
+    console.log('Admin Page: ', BenCache);
   }, []);
 
   const handleUpdate = async () => {
@@ -75,7 +65,9 @@ const Admin = ({mode, retailer, setMode, setRetailer, BenCache}) => {
     const cycle = (await api.get(`/beneficiary/${pin}/cycle/${e}`)).data;
     const beneficiary = (await api.get(`/beneficiary/${pin}`)).data;
     const benRetailer = beneficiary.retailerAssigned;
-    const assignedRetailer = retailerData.filter(retailer => retailer.retailerId === benRetailer);
+    const assignedRetailer = retailerData.filter(
+      retailer => retailer.retailerId === benRetailer,
+    );
 
     console.log('Printing receipt');
     const orderID = `ADMINPRINT-CYCLE-${e}`;
@@ -190,8 +182,13 @@ const Admin = ({mode, retailer, setMode, setRetailer, BenCache}) => {
           </View>
         )
       )}
-
-      <Button title="Sync" onPress={handleSync} />
+      <View style={styles.BeneficiaryInputBox}>
+        <Text style={styles.headerText}>
+          Total Offline Beneficiaries: {'213'}
+        </Text>
+        <Button title="Upload" onPress={handleSync} />
+        {loading && <ActivityIndicator size="large" color="#000" />}
+      </View>
     </View>
   );
 };

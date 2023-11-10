@@ -13,6 +13,7 @@ import {
 } from 'react-native';
 import {useNavigation} from '@react-navigation/native';
 import api from '../api/api';
+import retailerData from '../api/retailerData.json';
 
 export default function Pin({
   setSelectedBeneficiary,
@@ -23,16 +24,10 @@ export default function Pin({
   const navigation = useNavigation();
   const [pin, setPin] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const [retailerData, setRetailerData] = useState(null);
 
   const fetchRetailerData = async (retailerId, mode, benData) => {
     try {
-      const response = await api.get('/retailers');
-      const retailers = response.data;
-      console.log('PIN PAGE: ', retailers);
-      console.log('PIN PAGE: ', retailerId);
-
-      const assignedRetailer = retailers.find(
+      const assignedRetailer = retailerData.find(
         retailer => retailer.retailerId === retailerId,
       );
 

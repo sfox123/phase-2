@@ -9,7 +9,28 @@ const handlePrintReceipt = async (
   orderID,
   e,
 ) => {
-  console.log(assignedRetailer);
+
+  console.log(`PRINTER: Print request received for Order ID ${orderID} for Beneficiary ${pin}`);
+
+  let [retailerName, retailerDS, retailerGN] = ['N/A', 'N/A', 'N/A'];
+  if (Array.isArray(assignedRetailer)) {
+      if (assignedRetailer.length > 0) {
+         retailerName = assignedRetailer[0].name
+         retailerDS = assignedRetailer[0].dsDivision
+         retailerGN = assignedRetailer[0].gnDivision
+
+          
+      } else {
+          console.log("Array is empty");
+      }
+  } else if (typeof assignedRetailer === 'object' && assignedRetailer !== null) {
+      // If it's an object (and not null), directly access the 'name' field
+      retailerName = assignedRetailer.name
+      retailerDS = assignedRetailer.dsDivision
+      retailerGN = assignedRetailer.gnDivision
+  } else {
+      console.log("Invalid data type for assignedRetailer");
+  }
 
   const selectedBeneficiary = pin;
   try {
@@ -20,6 +41,8 @@ const handlePrintReceipt = async (
     // Use the "amount" in your code as needed
 
     try {
+      console.log(`PRINTER: Printing HEADER`);
+
       // Set alignment to CENTER for the header
       BluetoothEscposPrinter.printerAlign(BluetoothEscposPrinter.ALIGN.CENTER);
       BluetoothEscposPrinter.setBlob(0);
@@ -84,6 +107,7 @@ const handlePrintReceipt = async (
 
       BluetoothEscposPrinter.printText('Order#: ' + orderID + '\n\r', {});
       BluetoothEscposPrinter.printText('Printed: ' + currentDate + '\n\r', {});
+      console.log(`PRINTER: Printing ITEMS`);
 
       // Print a separator line
       BluetoothEscposPrinter.printText(
@@ -119,7 +143,10 @@ const handlePrintReceipt = async (
             : item.name;
         const unit = item.unit || '';
         const itemquantity = Number(item.Rquantity) * Number(item.quantity);
-        const amount = (item.price * item.quantity).toFixed(2); // Calculate the total amount for the item
+        const amount = (item.price * item.quantity).toFixed(2); 
+
+        console.log(`PRINTER: PRINTING ITEM - ${itemName.toString()}, QUANTITY - ${itemquantity}${unit}, AMOUNT - ${amount}`);
+
         BluetoothEscposPrinter.printColumn(
           [16, 7, 9], // Adjust column widths as needed
           [
@@ -147,6 +174,9 @@ const handlePrintReceipt = async (
         totalAmount += item.price * item.quantity;
       });
 
+      console.log(`PRINTER: Printing TOTAL - ${totalAmount.toFixed(2)} AMOUNT - ${totalItems.toString()}`);
+
+
       BluetoothEscposPrinter.printColumn(
         [16, 7, 9], // Adjust column widths as needed
         [
@@ -162,6 +192,9 @@ const handlePrintReceipt = async (
       );
 
       BluetoothEscposPrinter.printText('\n\r', {});
+
+      console.log(`PRINTER: Printing Voucher Info`);
+
       BluetoothEscposPrinter.printText(
         '--------------------------------\n\r',
         {},
@@ -192,24 +225,24 @@ const handlePrintReceipt = async (
         '--------------------------------\n\r',
         {},
       );
-      // Check if assignedRetailer.name is null and provide a default value
-      console.log('Retailer name ', assignedRetailer[0].name);
-      //const retailerName = assignedRetailer.name ? assignedRetailer.name : "n/a";
+
+      console.log(`PRINTER: Printing Retailer Info`);
+
       BluetoothEscposPrinter.printText(
-        'Retailer: ' + assignedRetailer[0].name + '\n\r',
+        'Retailer: ' + retailerName + '\n\r',
         {},
       );
 
-      // Check if assignedRetailer.gnDivision and assignedRetailer.dsDivision are null and provide default values
-      //const gnDivision = assignedRetailer.gnDivision ? assignedRetailer.gnDivision : "n/a";
-      //const dsDivision = assignedRetailer.dsDivision ? assignedRetailer.dsDivision : "n/a";
       BluetoothEscposPrinter.printText(
-        assignedRetailer[0].dsDivision +
+        retailerDS +
           ' - ' +
-          assignedRetailer[0].gnDivision +
+          retailerGN +
           '\n\r',
         {},
       );
+
+      console.log(`PRINTER: Printing Footer`);
+
       BluetoothEscposPrinter.printText(
         '--------------------------------\n\r',
         {},
@@ -226,8 +259,10 @@ const handlePrintReceipt = async (
       BluetoothEscposPrinter.printText('\n\r', {});
       BluetoothEscposPrinter.printText('\n\r', {});
       BluetoothEscposPrinter.printText('\n\r', {});
-      BluetoothEscposPrinter.printText('\n\r', {});
-      BluetoothEscposPrinter.printText('\n\r', {});
+
+
+      console.log(`PRINTER: Printing Done`);
+
     } catch (warning) {
       console.log('Printer Warning', warning);
     }

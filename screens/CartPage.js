@@ -167,6 +167,7 @@ export default function CartPage({
           selectedBeneficiary.amount,
           assignedRetailer,
           orderID,
+          e = 0,
         );
       } catch (warning) {
         console.log('Printer Warning', warning);
@@ -392,7 +393,7 @@ export default function CartPage({
             </View>
           ) : (
             <Text style={styles.checkoutText}>
-              {checkoutInitiated ? 'Reprint' : 'Checkout & Print'}
+              {checkoutInitiated ? 'Reprint/Merchant Copy' : 'Checkout & Print'}
             </Text>
           )}
         </TouchableOpacity>

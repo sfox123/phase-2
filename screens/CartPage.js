@@ -4,6 +4,9 @@ import {Alert} from 'react-native';
 import api from '../api/api';
 import {activeId} from '../App';
 import {isPrinterOk} from '../api/btprinter';
+import items from '../api/comodities';
+import retailerData from '../api/retailerData.json';
+
 import {
   View,
   Text,
@@ -26,6 +29,9 @@ export default function CartPage({
   selectedBeneficiary,
   retailer,
   cartItems,
+  mode,
+  benData,
+  setBenData,
   handleRemoveFromCart,
   setCartItems,
   setSelectedBeneficiary,
@@ -44,7 +50,6 @@ export default function CartPage({
   const [loadingState, setloadingState] = useState('Processing');
   const [isSuccess, setIsSuccess] = useState(false);
   const [assignedRetailer, setAssignedRetailer] = useState({name: 'baskar'});
-  const [items, setItems] = useState([]);
   const [isReceiptPrinted, setIsReceiptPrinted] = useState(false);
   const [checkoutInitiated, setCheckoutInitiated] = useState(false);
   const [CheckoutSuccess, setIsCheckoutSuccess] = useState(false);
@@ -87,38 +92,6 @@ export default function CartPage({
     }
   }, [checkoutInitiated, isFocused, navigation]);
 
-  // Fetch items from the API and cache them
-  useEffect(() => {
-    const fetchItems = async () => {
-      try {
-        // Check if data is cached in AsyncStorage
-        const cachedData = await AsyncStorage.getItem('cachedItems');
-
-        if (cachedData) {
-          // If cached data exists, use it
-          setItems(JSON.parse(cachedData));
-        } else {
-          // If no cached data, fetch from the API
-          const response = await api.get('/commodities');
-          const fetchedData = response.data;
-
-          // Store fetched data in state
-          setItems(fetchedData);
-
-          // Cache the fetched data in AsyncStorage for future use
-          await AsyncStorage.setItem(
-            'cachedItems',
-            JSON.stringify(fetchedData),
-          );
-        }
-      } catch (error) {
-        console.error('Error fetching items: ', error);
-      }
-    };
-
-    fetchItems();
-  }, []);
-
   function generateOrderID(selectedBeneficiary) {
     // Get the current date and time
     const currentDate = new Date();
@@ -143,8 +116,7 @@ export default function CartPage({
   useEffect(() => {
     const fetchRetailers = async () => {
       try {
-        const response = await api.get('/retailers');
-        const retailers = response.data;
+        const retailers = retailerData;
         console.log(retailers);
         console.log(retailerId);
 
@@ -176,25 +148,9 @@ export default function CartPage({
         timeZone: 'Asia/Colombo', // Set the time zone to Sri Lanka
       });
 
-      let bal = null;
-      let cycle = null;
+      let bal = selectedBeneficiary.amount;
+      let cycle = '18/11/2023';
 
-      const fetchBeneficiaryBal = async () => {
-        try {
-          const response = await api.get(
-            `/beneficiary/${selectedBeneficiary.id}`,
-          );
-          const beneficiary = response.data;
-
-          console.log(beneficiary.currentCycle);
-          bal = beneficiary.amount;
-          cycle = beneficiary.currentCycle;
-        } catch (error) {
-          console.error('Error beneficiary balance: ', error);
-        }
-      };
-
-      await fetchBeneficiaryBal();
       setIsLoading(false);
 
       // Use the "amount" in your code as needed
@@ -471,56 +427,109 @@ export default function CartPage({
     } else {
       try {
         setloadingState('Pushing data');
-        await api
-          .post('/beneficiaries/updateCart', {cartItems, id, retailer})
-          .then(async response => {
-            setTimeout(async () => {
-              setloadingState('Printing');
-              setIsReceiptPrinted(true);
-              if (isPrinterOk) {
-                try {
-                  await connectPrinter(activeId);
-                  await delay(3000); // Wait for the printer connection
-                } catch (error) {
-                  console.log('Printer error:', error);
+        if (mode) {
+          // Find the index of the selectedBeneficiary in the benData array
+          const index = benData.findIndex(
+            ben => ben.id === selectedBeneficiary.id,
+          );
+
+          // Make a copy of benData to avoid direct state mutation
+          let benDataTmp = [...benData];
+
+          if (index !== -1) {
+            // Make a copy of selectedBeneficiary to avoid direct state mutation
+            let selectedBeneficiaryTmp = {...selectedBeneficiary};
+
+            // Modify the itemsPurchased array and the amount key
+            selectedBeneficiaryTmp.itemsPurchased.push({
+              date: new Date(),
+              items: cartItems,
+            });
+            selectedBeneficiaryTmp.amount =
+              totalPrice - selectedBeneficiaryTmp.amount;
+            selectedBeneficiaryTmp.uploaded = false;
+            // Replace the object at the found index with the updated selectedBeneficiary
+            benDataTmp[index] = selectedBeneficiaryTmp;
+          }
+
+          setBenData(benDataTmp);
+
+          // Save the updated benData array to AsyncStorage
+          await AsyncStorage.removeItem('benData');
+          await AsyncStorage.setItem('benData', JSON.stringify(benDataTmp));
+          setloadingState('Printing');
+          setIsReceiptPrinted(true);
+          try {
+            await handlePrintReceipt();
+            setIsCheckoutSuccess(true);
+            Alert.alert('Order placed successfully!');
+          } catch (printError) {
+            console.error('Error printing receipt:', printError);
+            if (retryCount < 5) {
+              console.log('Retrying');
+              retryCount++;
+              // You can add more retries or other logic here.
+            } else {
+              console.error('Printing failed after multiple retries.');
+              setIsLoading(false);
+              return;
+            }
+          }
+        } else {
+          await api
+            .post('/beneficiaries/updateCart', {cartItems, id, retailer})
+            .then(async response => {
+              setTimeout(async () => {
+                setloadingState('Printing');
+                setIsReceiptPrinted(true);
+                if (isPrinterOk) {
+                  try {
+                    // await connectPrinter(activeId);
+                    // await delay(3000); // Wait for the printer connection
+                    console.log('FUCK OFF');
+                  } catch (error) {
+                    console.log('Printer error:', error);
+                    Alert.alert(
+                      'Printer disconnected. Check printer and reprint',
+                    );
+                    setIsLoading(false);
+                    return; // Stop execution if there's a printer error
+                  }
+                } else {
+                  console.log('No paired devices found.');
                   Alert.alert(
                     'Printer disconnected. Check printer and reprint',
                   );
                   setIsLoading(false);
-                  return; // Stop execution if there's a printer error
+                  setIsCheckoutSuccess(true);
+                  return; // Stop execution if there are no paired devices
                 }
-              } else {
-                console.log('No paired devices found.');
-                Alert.alert('Printer disconnected. Check printer and reprint');
+                try {
+                  await handlePrintReceipt();
+                  setIsCheckoutSuccess(true);
+                  Alert.alert('Order placed successfully!');
+                } catch (printError) {
+                  console.error('Error printing receipt:', printError);
+                  if (retryCount < 5) {
+                    console.log('Retrying');
+                    retryCount++;
+                    // You can add more retries or other logic here.
+                  } else {
+                    console.error('Printing failed after multiple retries.');
+                    setIsLoading(false);
+                    return;
+                  }
+                }
+                // Introduce a 2-second delay before setting the loading state back to false
+                await new Promise(resolve => setTimeout(resolve, 2000));
                 setIsLoading(false);
-                setIsCheckoutSuccess(true);
-                return; // Stop execution if there are no paired devices
-              }
-              try {
-                await handlePrintReceipt();
-                setIsCheckoutSuccess(true);
-                Alert.alert('Order placed successfully!');
-              } catch (printError) {
-                console.error('Error printing receipt:', printError);
-                if (retryCount < 5) {
-                  console.log('Retrying');
-                  retryCount++;
-                  // You can add more retries or other logic here.
-                } else {
-                  console.error('Printing failed after multiple retries.');
-                  setIsLoading(false);
-                  return;
-                }
-              }
-              // Introduce a 2-second delay before setting the loading state back to false
-              await new Promise(resolve => setTimeout(resolve, 2000));
-              setIsLoading(false);
-            }, 4000);
-            handleRemoveFromCart(null);
-          })
-          .catch(error => {
-            console.error(error);
-          });
+              }, 4000);
+              handleRemoveFromCart(null);
+            })
+            .catch(error => {
+              console.error(error);
+            });
+        }
       } catch (error) {
         console.error(error);
       }
@@ -584,16 +593,26 @@ export default function CartPage({
             <Text style={styles.messageText}>Exceeds balance</Text>
           </View>
         ) : null}
+        {totalPrice < 17001 ? (
+          <View style={styles.messageContainer}>
+            <Text style={styles.messageText}>Minimum order is Rs 17000</Text>
+          </View>
+        ) : null}
         <TouchableOpacity
           style={[
             styles.checkoutButton,
-            totalPrice === 0 || totalPrice > amount
+            totalPrice === 0 || totalPrice > amount || totalPrice < 17001
               ? styles.disabledButton
               : null,
             isLoading ? styles.loadingButton : null,
           ]}
           onPress={checkoutInitiated ? handleReprintReceipt : handleCheckout}
-          disabled={totalPrice === 0 || totalPrice > amount || isLoading}>
+          disabled={
+            totalPrice === 0 ||
+            totalPrice > amount ||
+            isLoading ||
+            totalPrice < 17001
+          }>
           {isLoading ? (
             <View style={styles.loadingContainer}>
               <ActivityIndicator size="small" color="#ffffff" />

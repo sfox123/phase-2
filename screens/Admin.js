@@ -88,6 +88,39 @@ const styles = StyleSheet.create({
   },
 });
 
+const PinRequest = ({onPinEnter}) => {
+  const [pin, setPin] = useState('');
+
+  const handlePinSubmit = () => {
+    if (pin === '2121212') {
+      onPinEnter(true);
+    } else {
+      Alert.alert('Invalid PIN', 'Please enter the correct PIN.');
+      onPinEnter(false);
+    }
+  };
+
+  return (
+    <View style={styles.Pincontainer}>
+      <TextInput
+        style={styles.input}
+        value={pin}
+        onChangeText={setPin}
+        placeholder="Enter PIN"
+        secureTextEntry
+      />
+      <Button
+        title="Submit"
+        onPress={handlePinSubmit}
+        color={styles.button.backgroundColor}
+      />
+    </View>
+  );
+};
+
+// const onlineMode = await AsyncStorage.getItem('isOnline');
+// const retailerCache = await AsyncStorage.getItem('retailer');
+
 const Admin = ({mode, setMode, retailer, setRetailer}) => {
   const [showScanner, setShowScanner] = useState(false);
   const [pin, setPin] = useState('');
@@ -107,12 +140,10 @@ const Admin = ({mode, setMode, retailer, setRetailer}) => {
     }
   };
 
-  const handlePrintCycle = async e => {
-    console.log("Trying to print")
+  const handlePrintReceipt = async e => {
     const cycle = (await api.get(`/beneficiary/${pin}/cycle/${e}`)).data;
-    console.log(cycle)
     console.log('Printing receipt');
-    handlePrintReceipt(cycle, pin);
+    handlePrintReceipt(cycle);
     // Print receipt
   };
 
@@ -140,7 +171,6 @@ const Admin = ({mode, setMode, retailer, setRetailer}) => {
 
   const handleSync = () => {
     // Sync data
-    console.log(mode);
   };
 
   return (
@@ -149,7 +179,7 @@ const Admin = ({mode, setMode, retailer, setRetailer}) => {
 
       <View style={styles.switchContainer}>
         <Text>Offline Mode:</Text>
-        <Switch value={mode} onValueChange={setMode} />
+        <Switch value={mode} onValueChange={value => setMode(value)} />
       </View>
       <View style={styles.BeneficiaryInputBox}>
         <TextInput
@@ -207,7 +237,7 @@ const Admin = ({mode, setMode, retailer, setRetailer}) => {
                 {cycle.amount !== 17500 && (
                   <Button
                     title={`Print Receipt Cycle ${index + 1}`}
-                    onPress={() => handlePrintCycle(index)}
+                    onPress={() => handlePrintReceipt(index)}
                     style={styles.printReceiptButton}
                   />
                 )}
@@ -221,4 +251,23 @@ const Admin = ({mode, setMode, retailer, setRetailer}) => {
   );
 };
 
-export default Admin;
+const App = ({mode, setMode, retailer, setRetailer}) => {
+  const [isAdmin, setIsAdmin] = useState(false);
+
+  const handlePinEnter = isValid => {
+    setIsAdmin(isValid);
+  };
+
+  return isAdmin ? (
+    <Admin
+      mode={mode}
+      setMode={setMode}
+      retailer={retailer}
+      setRetailer={setRetailer}
+    />
+  ) : (
+    <PinRequest onPinEnter={handlePinEnter} />
+  );
+};
+
+export default App;

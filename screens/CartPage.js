@@ -24,11 +24,10 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import {StatusBar} from 'react-native';
 import {connectPrinter} from '../api/btprinter';
 import {BluetoothEscposPrinter} from 'react-native-bluetooth-escpos-printer';
-let retailerId = '0002';
 
 export default function CartPage({
   selectedBeneficiary,
-  retailer,
+  retailerId,
   cartItems,
   mode,
   benData,
@@ -204,7 +203,6 @@ export default function CartPage({
         if (retryCount < 5) {
           console.log('Retrying');
           retryCount++;
-          // You can add more retries or other logic here.
         } else {
           console.error('Printing failed after multiple retries.');
           setIsLoading(false);
@@ -215,19 +213,14 @@ export default function CartPage({
       try {
         setloadingState('Pushing data');
         if (mode) {
-          // Find the index of the selectedBeneficiary in the benData array
           const index = benData.findIndex(
             ben => ben.id === selectedBeneficiary.id,
           );
 
-          // Make a copy of benData to avoid direct state mutation
           let benDataTmp = [...benData];
 
           if (index !== -1) {
-            // Make a copy of selectedBeneficiary to avoid direct state mutation
             let selectedBeneficiaryTmp = {...selectedBeneficiary};
-
-            // Replace the itemsPurchased array and update the amount key
             selectedBeneficiaryTmp.itemsPurchased = [
               {
                 date: new Date(),
@@ -235,18 +228,13 @@ export default function CartPage({
               },
             ];
             selectedBeneficiaryTmp.amount =
-              Number(totalPrice) - Number(selectedBeneficiaryTmp.amount);
+              Number(selectedBeneficiaryTmp.amount) - Number(totalPrice);
             selectedBeneficiaryTmp.uploaded = false;
-
-            // Replace the object at the found index with the updated selectedBeneficiary
             benDataTmp[index] = selectedBeneficiaryTmp;
           }
-
+          console.log('benDataTmp', benDataTmp);
+          await AsyncStorage.setItem('benCache', JSON.stringify(benDataTmp));
           setBenData(benDataTmp);
-
-          // Save the updated benData array to AsyncStorage
-          await AsyncStorage.removeItem('benData');
-          await AsyncStorage.setItem('benData', JSON.stringify(benDataTmp));
           setloadingState('Printing');
           setIsReceiptPrinted(true);
           try {
@@ -258,7 +246,6 @@ export default function CartPage({
             if (retryCount < 5) {
               console.log('Retrying');
               retryCount++;
-              // You can add more retries or other logic here.
             } else {
               console.error('Printing failed after multiple retries.');
               setIsLoading(false);
@@ -267,22 +254,20 @@ export default function CartPage({
           }
         } else {
           await api
-            .post('/beneficiaries/updateCart', {cartItems, id, retailer})
+            .post('/beneficiaries/updateCart', {cartItems, id, retailerId})
             .then(async response => {
               setTimeout(async () => {
                 setloadingState('Printing');
                 setIsReceiptPrinted(true);
                 if (isPrinterOk) {
                   try {
-                    // await connectPrinter(activeId);
-                    // await delay(3000); // Wait for the printer connection
                   } catch (error) {
                     console.log('Printer error:', error);
                     Alert.alert(
                       'Printer disconnected. Check printer and reprint',
                     );
                     setIsLoading(false);
-                    return; // Stop execution if there's a printer error
+                    return;
                   }
                 } else {
                   console.log('No paired devices found.');
@@ -291,7 +276,7 @@ export default function CartPage({
                   );
                   setIsLoading(false);
                   setIsCheckoutSuccess(true);
-                  return; // Stop execution if there are no paired devices
+                  return;
                 }
                 try {
                   await handleReceipt();
@@ -302,14 +287,12 @@ export default function CartPage({
                   if (retryCount < 5) {
                     console.log('Retrying');
                     retryCount++;
-                    // You can add more retries or other logic here.
                   } else {
                     console.error('Printing failed after multiple retries.');
                     setIsLoading(false);
                     return;
                   }
                 }
-                // Introduce a 2-second delay before setting the loading state back to false
                 await new Promise(resolve => setTimeout(resolve, 2000));
                 setIsLoading(false);
               }, 4000);

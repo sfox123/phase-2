@@ -1,0 +1,195 @@
+[
+  {
+    "district": "Mullaitivu",
+    "gnDivision": "Moonrumurippu",
+    "dsDivision": "Manthai East",
+    "name": "John Doe",
+    "retailerId": "0019",
+    "id": "12345"
+  },
+  {
+    "name": "Tom Doe",
+    "dsDivision": "Weli Oya",
+    "gnDivision": "Oya",
+    "retailerId": "989231232",
+    "id": "35456260"
+  },
+  {
+    "district": "Mullaitivu",
+    "dsDivision": "Manthai East",
+    "inventory": [{"name": "", "stocks": ""}],
+    "status": "active",
+    "retailerId": "0009",
+    "gnDivision": "Oddaruththakulam",
+    "name": "Inparasa Tevaki",
+    "id": "RMullaitivuManthaiEast00001"
+  },
+  {
+    "retailerId": "0007",
+    "dsDivision": "Manthai East",
+    "gnDivision": "Naddankandal",
+    "district": "Mullaitivu",
+    "status": "active",
+    "name": "Patkunarasa Anitta",
+    "id": "RMullaitivuManthaiEast00002"
+  },
+  {
+    "retailerId": "0008",
+    "dsDivision": "Manthai East",
+    "gnDivision": "Palinagar",
+    "district": "Mullaitivu",
+    "status": "active",
+    "name": "Thurairasa Vijithan",
+    "id": "RMullaitivuManthaiEast00003"
+  },
+  {
+    "retailerId": "0010",
+    "district": "Mullaitivu",
+    "gnDivision": "Pandiyankulam",
+    "dsDivision": "Manthai East",
+    "status": "active",
+    "name": "Sellathuthurai Kanesalingam",
+    "id": "RMullaitivuManthaiEast00004"
+  },
+  {
+    "retailerId": "0011",
+    "district": "Mullaitivu",
+    "dsDivision": "Manthai East",
+    "gnDivision": "Karumpulliyan",
+    "status": "active",
+    "name": "Rajanikanth Joka",
+    "id": "RMullaitivuManthaiEast00005"
+  },
+  {
+    "retailerId": "0012",
+    "district": "Mullaitivu",
+    "gnDivision": "Siraddikulam",
+    "status": "active",
+    "dsDivision": "Manthai East",
+    "name": "Ramu Vijayasuntharam",
+    "id": "RMullaitivuManthaiEast00006"
+  },
+  {
+    "retailerId": "0020",
+    "name": "Ramathas Suntharrajan",
+    "dsDivision": "Manthai East",
+    "gnDivision": "Ampalpuram",
+    "district": "Mullaitivu",
+    "id": "RMullaitivuManthaiEast00007"
+  },
+  {
+    "retailerId": "0023",
+    "gnDivision": "Poovarasankulam",
+    "dsDivision": "Manthai East",
+    "name": "Sriskanathan Kuladevi",
+    "district": "Mullaitivu",
+    "id": "RMullaitivuManthaiEast00008"
+  },
+  {
+    "district": "Mullaitivu",
+    "dsDivision": "Thunukkai",
+    "inventory": [{"name": "", "stocks": ""}],
+    "gnDivision": "Yogapuram Centre",
+    "status": "active",
+    "retailerId": "0013",
+    "name": "Pasakaran Viyajagowry",
+    "id": "RMullaitivuThunukkai00001"
+  },
+  {
+    "retailerId": "0014",
+    "district": "Mullaitivu",
+    "gnDivision": "Kalvilan",
+    "dsDivision": "Thunukkai",
+    "status": "active",
+    "name": "Selvaradmam Jeevajothy",
+    "id": "RMullaitivuThunukkai00002"
+  },
+  {
+    "retailerId": "0017",
+    "district": "Mullaitivu",
+    "gnDivision": "Therankandal",
+    "dsDivision": "Thunukkai",
+    "status": "active",
+    "name": "Selvarasa Rameswary",
+    "id": "RMullaitivuThunukkai00003"
+  },
+  {
+    "retailerId": "0015",
+    "dsDivision": "Thunukkai",
+    "gnDivision": "Thirunagar",
+    "district": "Mullaitivu",
+    "status": "active",
+    "name": "Kopalakirushnan Suganthiny",
+    "id": "RMullaitivuThunukkai00004"
+  },
+  {
+    "retailerId": "0016",
+    "gnDivision": "Aninchiyankulam",
+    "dsDivision": "Thunukkai",
+    "district": "Mullaitivu",
+    "name": "Murukaiyah Parameswary",
+    "status": "active",
+    "id": "RMullaitivuThunukkai00005"
+  },
+  {
+    "district": "Mullaitivu",
+    "dsDivision": "Welioya",
+    "inventory": [{"name": "", "stocks": ""}],
+    "gnDivision": "Ahatugaswewa",
+    "status": "active",
+    "retailerId": "0006",
+    "name": "WA Vijitha Karunarathna",
+    "id": "RMullaitivuWelioya00001"
+  },
+  {
+    "district": "Mullaitivu",
+    "dsDivision": "Welioya",
+    "retailerId": "0003",
+    "status": "active",
+    "gnDivision": "Kalyanapura",
+    "name": "DM Kushanthi Hemalatha",
+    "id": "RMullaitivuWelioya00002"
+  },
+  {
+    "district": "Mullaitivu",
+    "retailerId": "0004",
+    "status": "active",
+    "gnDivision": "Janakapura",
+    "dsDivision": "Welioya",
+    "name": "EHM Raveenthu Dilshan",
+    "id": "RMullaitivuWelioya00003"
+  },
+  {
+    "retailerId": "0005",
+    "gnDivision": "Kiribanawawea",
+    "district": "Mullaitivu",
+    "status": "active",
+    "dsDivision": "Welioya",
+    "name": "DP Indrani Karunarathna",
+    "id": "RMullaitivuWelioya00004"
+  },
+  {
+    "retailerId": "0002",
+    "name": "UBM Indrani Janawathy",
+    "gnDivision": "Athawatunawewa",
+    "district": "Mullaitivu",
+    "dsDivision": "Welioya",
+    "id": "RMullaitivuWelioya00005"
+  },
+  {
+    "gnDivision": "Gajabapura",
+    "dsDivision": "Welioya",
+    "district": "Mullaitivu",
+    "name": "Malini Jeyalal",
+    "retailerId": "0022",
+    "id": "RMullaitivuWelioya00006"
+  },
+  {
+    "name": "VOUCHER EXPIRED",
+    "retailerId": "0000",
+    "dsDivision": "BLOCKED",
+    "gnDivision": "BLOCKED",
+    "district": "ALL",
+    "id": "retailersBLOCK"
+  }
+]

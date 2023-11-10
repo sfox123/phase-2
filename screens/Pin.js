@@ -1,6 +1,6 @@
 // This component is the PIN login screen. It is displayed when the user first launches the app.
 
-import React, { useState, useEffect } from "react";
+import React, {useState, useEffect} from 'react';
 import {
   StyleSheet,
   Text,
@@ -9,41 +9,47 @@ import {
   TouchableOpacity,
   ActivityIndicator,
   Alert,
-  ToastAndroid
-} from "react-native";
-import { useNavigation } from "@react-navigation/native";
-import api from "../api/api";
+  ToastAndroid,
+} from 'react-native';
+import {useNavigation} from '@react-navigation/native';
+import api from '../api/api';
 
-export default function Pin({ setSelectedBeneficiary, retailerId }) {
+export default function Pin({
+  setSelectedBeneficiary,
+  retailerId,
+  mode,
+  benData,
+}) {
   const navigation = useNavigation();
-  const [pin, setPin] = useState("");
+  const [pin, setPin] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [retailerData, setRetailerData] = useState(null);
 
-  const fetchRetailerData = async (retailerId) => {
+  const fetchRetailerData = async (retailerId, mode, benData) => {
     try {
-      const response = await api.get("/retailers");
+      const response = await api.get('/retailers');
       const retailers = response.data;
-      console.log("PIN PAGE: ",retailers)
-      console.log("PIN PAGE: ",retailerId)
+      console.log('PIN PAGE: ', retailers);
+      console.log('PIN PAGE: ', retailerId);
 
-      const assignedRetailer = retailers.find((retailer) => retailer.retailerId === retailerId);
-
+      const assignedRetailer = retailers.find(
+        retailer => retailer.retailerId === retailerId,
+      );
 
       if (assignedRetailer) {
         try {
-          console.log("PIN PAGE: ", assignedRetailer)
+          console.log('PIN PAGE: ', assignedRetailer);
           const response = await api.get(`/retailer/${assignedRetailer}`);
           const data = response.data;
           setRetailerData(data); // Save the data to the state
         } catch (error) {
-          console.log("PIN PAGE: ","Error fetching retailer data: ", error);
+          console.log('PIN PAGE: ', 'Error fetching retailer data: ', error);
         }
       } else {
-        console.log("PIN PAGE: ","Retailer not found with ID: ", retailerId);
+        console.log('PIN PAGE: ', 'Retailer not found with ID: ', retailerId);
       }
     } catch (error) {
-      console.log("PIN PAGE: ","Error fetching retailers: ", error);
+      console.log('PIN PAGE: ', 'Error fetching retailers: ', error);
     }
   };
 
@@ -52,50 +58,76 @@ export default function Pin({ setSelectedBeneficiary, retailerId }) {
     if (retailerId) {
       fetchRetailerData(retailerId);
     }
-  }, [retailerId])
-
+  }, [retailerId]);
 
   // When the user clicks the login button
   const handleLogin = async () => {
     setIsLoading(true);
     if (pin === '12345678') {
-      ToastAndroid.show('This is a dummy account to be used for training purposes only', ToastAndroid.SHORT);
+      ToastAndroid.show(
+        'This is a dummy account to be used for training purposes only',
+        ToastAndroid.SHORT,
+      );
     }
 
     try {
-      const beneficiary = (await api.get(`/beneficiary/${pin}`)).data;
-      if (beneficiary) {
-        console.log(`Text/PIN input is used to login. Used ID: ${pin}`)
-        console.log("APK_Assigned_retailer:", retailerId)
-        console.log("Retailer assigned:", beneficiary.retailerAssigned);
-
-        if(beneficiary.retailerAssigned == retailerId){
-          setSelectedBeneficiary(beneficiary);
-          ToastAndroid.show('Logged in', ToastAndroid.SHORT);
-          navigation.navigate("BeneficiaryDetails");
-        }
-        else if (beneficiary.id == "12345678"){
-          ToastAndroid.show('Skipping retailer check for test beneficiary', ToastAndroid.SHORT);
-          setSelectedBeneficiary(beneficiary);
-          navigation.navigate("BeneficiaryDetails");
-        }
-        else {
-          const beneficiaryRetailerdata = (await api.get(`/retailers`)).data;
-          const assignedRetailer = beneficiaryRetailerdata.find(
-            (retailer) => retailer.retailerId === beneficiary.retailerAssigned
-          );
-        
-          if (assignedRetailer) {
-            const { name, gnDivision, retailerId } = assignedRetailer;
-            Alert.alert(`Beneficiary not allowed to make purchases from this retailer.\nAssigned retailer: ${name} - ${gnDivision} (${retailerId})`);
+      if (mode) {
+        const beneficiary = benData.find(ben => ben.id === pin);
+        if (beneficiary) {
+          if (pin === '12345678') {
+            ToastAndroid.show(
+              'This is a dummy account to be used for training purposes only',
+              ToastAndroid.SHORT,
+            );
+            setSelectedBeneficiary(beneficiary);
+            ToastAndroid.show('Logged in', ToastAndroid.SHORT);
+            navigation.navigate('BeneficiaryDetails');
+          } else {
+            setSelectedBeneficiary(beneficiary);
+            ToastAndroid.show('Logged in', ToastAndroid.SHORT);
+            navigation.navigate('BeneficiaryDetails');
           }
+        } else {
+          Alert.alert('Beneficiary not found');
         }
       } else {
-        Alert.alert("Beneficiary not found");
+        const beneficiary = (await api.get(`/beneficiary/${pin}`)).data;
+        if (beneficiary) {
+          console.log(`Text/PIN input is used to login. Used ID: ${pin}`);
+          console.log('APK_Assigned_retailer:', retailerId);
+          console.log('Retailer assigned:', beneficiary.retailerAssigned);
+
+          if (beneficiary.retailerAssigned == retailerId) {
+            setSelectedBeneficiary(beneficiary);
+            ToastAndroid.show('Logged in', ToastAndroid.SHORT);
+            navigation.navigate('BeneficiaryDetails');
+          } else if (beneficiary.id == '12345678') {
+            ToastAndroid.show(
+              'Skipping retailer check for test beneficiary',
+              ToastAndroid.SHORT,
+            );
+            setSelectedBeneficiary(beneficiary);
+            navigation.navigate('BeneficiaryDetails');
+          } else {
+            const beneficiaryRetailerdata = (await api.get(`/retailers`)).data;
+            const assignedRetailer = beneficiaryRetailerdata.find(
+              retailer => retailer.retailerId === beneficiary.retailerAssigned,
+            );
+
+            if (assignedRetailer) {
+              const {name, gnDivision, retailerId} = assignedRetailer;
+              Alert.alert(
+                `Beneficiary not allowed to make purchases from this retailer.\nAssigned retailer: ${name} - ${gnDivision} (${retailerId})`,
+              );
+            }
+          }
+        } else {
+          Alert.alert('Beneficiary not found');
+        }
       }
     } catch (error) {
       console.error(error);
-      Alert.alert("Error finding beneficiary");
+      Alert.alert('Error finding beneficiary');
     } finally {
       setIsLoading(false);
     }
@@ -113,14 +145,13 @@ export default function Pin({ setSelectedBeneficiary, retailerId }) {
         keyboardType="numeric"
         maxLength={8}
         value={pin}
-        onChangeText={(text) => setPin(text)}
+        onChangeText={text => setPin(text)}
         secureTextEntry={true}
       />
       <TouchableOpacity
         style={[styles.button, isLoginDisabled() && styles.disabledButton]}
         onPress={handleLogin}
-        disabled={isLoginDisabled()}
-      >
+        disabled={isLoginDisabled()}>
         {isLoading ? (
           <ActivityIndicator size="small" color="white" />
         ) : (
@@ -134,38 +165,38 @@ export default function Pin({ setSelectedBeneficiary, retailerId }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#fff",
-    alignItems: "center",
-    justifyContent: "center",
+    backgroundColor: '#fff',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   title: {
     fontSize: 24,
-    fontWeight: "bold",
+    fontWeight: 'bold',
     marginBottom: 20,
   },
   input: {
     borderWidth: 1,
-    borderColor: "#ccc",
+    borderColor: '#ccc',
     borderRadius: 5,
     padding: 10,
     width: 200,
     marginBottom: 20,
-    textAlign: "center",
+    textAlign: 'center',
     fontSize: 24,
   },
   button: {
-    backgroundColor: "#007AFF",
+    backgroundColor: '#007AFF',
     borderRadius: 5,
     padding: 10,
     width: 200,
-    alignItems: "center",
+    alignItems: 'center',
   },
   disabledButton: {
-    backgroundColor: "#ccc",
+    backgroundColor: '#ccc',
   },
   buttonText: {
-    color: "white",
+    color: 'white',
     fontSize: 18,
-    fontWeight: "bold",
+    fontWeight: 'bold',
   },
 });

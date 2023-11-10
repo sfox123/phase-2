@@ -23,7 +23,8 @@ function App() {
   const [selectedBeneficiary, setSelectedBeneficiary] = useState(null);
   const [language, setLanguage] = useState('tam');
   const [retailer, setRetailer] = useState('');
-  const [mode, setMode] = useState(false);
+  const [benData, setBenData] = useState([]);
+  const [mode, setMode] = useState('');
 
   StatusBar.setTranslucent(true);
   StatusBar.setBackgroundColor('rgba(0, 0, 0, 0.2)');
@@ -129,6 +130,7 @@ function App() {
         const lang = await AsyncStorage.getItem('selectedLanguage');
         const onlineMode = await AsyncStorage.getItem('isOnline');
         const retailerCache = await AsyncStorage.getItem('retailer');
+        const BenCache = await AsyncStorage.getItem('benCache');
         console.log(retailerCache);
         if (lang !== null) {
           setLanguage('tam');
@@ -138,8 +140,12 @@ function App() {
           console.log(retailer);
         }
         if (onlineMode !== null) {
-          setMode(onlineMode);
+          setMode(onlineMode === 'true' ? true : false);
         }
+        if (BenCache !== null) {
+          setBenData(JSON.parse(BenCache));
+        }
+        console.log('BenCache', BenCache);
       } catch (error) {
         console.error(error);
       }
@@ -160,6 +166,8 @@ function App() {
             <Pin
               {...props}
               retailerId={retailer}
+              mode={mode}
+              benData={benData}
               setSelectedBeneficiary={setSelectedBeneficiary}
             />
           )}
@@ -192,6 +200,8 @@ function App() {
             <Scanner
               {...props}
               retailerId={retailer}
+              mode={mode}
+              benData={benData}
               setSelectedBeneficiary={setSelectedBeneficiary}
             />
           )}
@@ -204,6 +214,9 @@ function App() {
               setSelectedBeneficiary={setSelectedBeneficiary}
               setCartItems={setCartItems}
               retailerId={retailer}
+              mode={mode}
+              benData={benData}
+              setBenData={setBenData}
               selectedBeneficiary={selectedBeneficiary}
               handleRemoveFromCart={handleRemoveFromCart}
             />

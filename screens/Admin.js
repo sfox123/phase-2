@@ -108,9 +108,11 @@ const Admin = ({mode, setMode, retailer, setRetailer}) => {
   };
 
   const handlePrintCycle = async e => {
+    console.log("Trying to print")
     const cycle = (await api.get(`/beneficiary/${pin}/cycle/${e}`)).data;
+    console.log(cycle)
     console.log('Printing receipt');
-    handlePrintReceipt(cycle);
+    handlePrintReceipt(cycle, pin);
     // Print receipt
   };
 

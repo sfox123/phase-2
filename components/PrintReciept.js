@@ -1,11 +1,13 @@
 import {BluetoothEscposPrinter} from 'react-native-bluetooth-escpos-printer';
 
-const handlePrintReceipt = async cartItems => {
+const handlePrintReceipt = async (cartItems, pin) => {
+  const selectedBeneficiary = pin;
   try {
     const orderID = '1111';
     const currentDate = new Date().toLocaleString('en-US', {
       timeZone: 'Asia/Colombo', // Set the time zone to Sri Lanka
     });
+    
 
     // Use the "amount" in your code as needed
 
@@ -68,7 +70,7 @@ const handlePrintReceipt = async cartItems => {
       BluetoothEscposPrinter.printerAlign(BluetoothEscposPrinter.ALIGN.LEFT);
 
       BluetoothEscposPrinter.printText(
-        'Customer: ' + selectedBeneficiary.id + '\n\r',
+        'Customer: ' + selectedBeneficiary + '\n\r',
         {},
       );
 

@@ -35,6 +35,8 @@ const Admin = ({mode, retailer, setMode, setRetailer, BenCache}) => {
         }
       });
     };
+    setOnline(mode);
+    setRetailerInput(retailer);
     handleBenListOff();
     console.log(offlineBen);
   }, []);

@@ -4,7 +4,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import api from '../api/api';
 import handlePrintReceipt from '../components/PrintReciept';
 import data from '../api/data.json';
- 
+
 import {
   View,
   TextInput,
@@ -15,20 +15,31 @@ import {
   Switch,
   ActivityIndicator,
 } from 'react-native';
- 
-const Admin = ({mode, retailer, setMode, setRetailer}) => {
+
+const Admin = ({mode, retailer, setMode, setRetailer, benData}) => {
   const [showScanner, setShowScanner] = useState(false);
   const [pin, setPin] = useState('');
   const [inputRetailer, setRetailerInput] = useState('');
   const [online, setOnline] = useState(false);
   const [beneficiary, setBeneficiary] = useState(false);
+  const [offlineBen, setOfflineBen] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
- 
+
   useEffect(() => {
+    const handleBenListOff = async () => {
+      benData.filter(item => {
+        if (item.uploaded === false) {
+          setOfflineBen([...offlineBen, item]);
+        }
+      });
+    };
     setOnline(mode);
+    setRetailerInput(retailer);
+    handleBenListOff();
+    console.log(offlineBen);
   }, []);
- 
+
   const handleUpdate = async () => {
     // Update retailer ID
     const BenCache = [];
@@ -58,14 +69,14 @@ const Admin = ({mode, retailer, setMode, setRetailer}) => {
       Alert.alert('Error updating retailer ID');
     }
   };
- 
+
   const handlePrintCycle = async e => {
     const cycle = (await api.get(`/beneficiary/${pin}/cycle/${e}`)).data;
     console.log('Printing receipt');
     handlePrintReceipt(cycle, pin);
     // Print receipt
   };
- 
+
   const handleRequestPin = async e => {
     try {
       const beneficiary = (await api.get(`/beneficiary/${pin}`)).data;
@@ -87,16 +98,16 @@ const Admin = ({mode, retailer, setMode, setRetailer}) => {
     // Handle scanned QR code
     setShowScanner(false);
   };
- 
+
   const handleSync = async () => {
     const das = await AsyncStorage.getItem('benCache');
     console.log(online);
   };
- 
+
   return (
     <View style={styles.container}>
       <Text style={styles.headerText}>Admin Dashboard</Text>
- 
+
       <View style={styles.switchContainer}>
         <Text>Offline Mode:</Text>
         <Switch value={online} onValueChange={setOnline} />
@@ -109,7 +120,7 @@ const Admin = ({mode, retailer, setMode, setRetailer}) => {
           placeholder={retailer !== null ? retailer : 'Enter Retailer ID'}
         />
         <Button title="Update" onPress={handleUpdate} />
- 
+
         <Text style={styles.headerText}>Find Beneficiary</Text>
         <View style={{marginBottom: 20}}>
           <TextInput
@@ -132,7 +143,7 @@ const Admin = ({mode, retailer, setMode, setRetailer}) => {
           />
         )}
       </View>
- 
+
       {loading ? (
         <ActivityIndicator size="large" color="#000" />
       ) : error ? (
@@ -147,7 +158,7 @@ const Admin = ({mode, retailer, setMode, setRetailer}) => {
             <Text style={styles.beneficiaryText}>
               GN Division: {beneficiary.gnDivision}
             </Text>
- 
+
             <Text style={styles.headerText}>Cycle</Text>
             {beneficiary.cycle.map((cycle, index) => (
               <View key={index} style={styles.cycleContainer}>
@@ -166,11 +177,12 @@ const Admin = ({mode, retailer, setMode, setRetailer}) => {
           </View>
         )
       )}
+
       <Button title="Sync" onPress={handleSync} />
     </View>
   );
 };
- 
+
 const styles = StyleSheet.create({
   Pincontainer: {
     flex: 1,
@@ -242,5 +254,5 @@ const styles = StyleSheet.create({
     color: '#ffffff',
   },
 });
- 
+
 export default Admin;

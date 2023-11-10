@@ -539,7 +539,7 @@ export default function CartPage({
   const handleCloseSuccess = () => {
     setCheckoutInitiated(false);
     setIsSuccess(true);
-    navigation && navigation.navigate('Home');
+    navigation.navigate('Home');
     setSelectedBeneficiary && setSelectedBeneficiary(null);
     setCartItems && setCartItems([]);
   };
@@ -633,7 +633,7 @@ export default function CartPage({
             </TouchableOpacity>
           </View>
         )}
-        <Modal visible={isSuccess} animationType="slide" transparent={true}>
+        {/* <Modal visible={isSuccess} animationType="slide" transparent={true}>
           <View style={styles.successContainer}>
             <AntDesign name="closecircle" size={64} color="red" />
             <Text style={styles.successText}>
@@ -655,12 +655,12 @@ export default function CartPage({
                 styles.button,
                 isLoading ? styles.loadingButton : null,
               ]}
-              onPress={() => setIsSuccess(false)} // Set isSuccess to false
+              onPress={() => setIsSuccess(false)}
             >
               <Text style={styles.checkoutText}>No</Text>
             </TouchableOpacity>
           </View>
-        </Modal>
+        </Modal> */}
       </View>
     </ScrollView>
   );

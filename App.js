@@ -179,6 +179,8 @@ function App() {
               mode={mode}
               setMode={setMode}
               retailer={retailer}
+              BenCache={benData}
+              setBenData={setBenData}
               setRetailer={setRetailer}
             />
           )}

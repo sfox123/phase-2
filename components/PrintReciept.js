@@ -1,24 +1,24 @@
 import {BluetoothEscposPrinter} from 'react-native-bluetooth-escpos-printer';
 import items from '../api/comodities';
-
-
-
+ 
+ 
+ 
 const handlePrintReceipt = async (cartItems, pin, balance, assignedRetailer, orderID, e) => {
   console.log(assignedRetailer)
-  
+ 
   const selectedBeneficiary = pin;
   try {
     const currentDate = new Date().toLocaleString('en-US', {
       timeZone: 'Asia/Colombo', // Set the time zone to Sri Lanka
     });
-
+ 
     // Use the "amount" in your code as needed
-
+ 
     try {
       // Set alignment to CENTER for the header
       BluetoothEscposPrinter.printerAlign(BluetoothEscposPrinter.ALIGN.CENTER);
       BluetoothEscposPrinter.setBlob(0);
-
+ 
       // Print the header
       BluetoothEscposPrinter.printText('WFP - DSD\n\r', {
         encoding: 'GBK',
@@ -27,11 +27,11 @@ const handlePrintReceipt = async (cartItems, pin, balance, assignedRetailer, ord
         heigthtimes: 0,
         fonttype: 1,
       });
-
+ 
       // Set alignment to CENTER for the header
       BluetoothEscposPrinter.printerAlign(BluetoothEscposPrinter.ALIGN.CENTER);
       BluetoothEscposPrinter.setBlob(0);
-
+ 
       // Print the header
       BluetoothEscposPrinter.printText('Mini\n\r', {
         encoding: 'GBK',
@@ -40,11 +40,11 @@ const handlePrintReceipt = async (cartItems, pin, balance, assignedRetailer, ord
         heigthtimes: 0,
         fonttype: 1,
       });
-
+ 
       // Set alignment to CENTER for the header
       BluetoothEscposPrinter.printerAlign(BluetoothEscposPrinter.ALIGN.CENTER);
       BluetoothEscposPrinter.setBlob(0);
-
+ 
       // Print the header
       BluetoothEscposPrinter.printText('Food-City\n\r', {
         encoding: 'GBK',
@@ -53,7 +53,7 @@ const handlePrintReceipt = async (cartItems, pin, balance, assignedRetailer, ord
         heigthtimes: 0,
         fonttype: 1,
       });
-
+ 
       // Print "Receipt" text
       BluetoothEscposPrinter.printerAlign(BluetoothEscposPrinter.ALIGN.CENTER);
       BluetoothEscposPrinter.setBlob(0);
@@ -68,24 +68,24 @@ const handlePrintReceipt = async (cartItems, pin, balance, assignedRetailer, ord
         '--------------------------------\n\r',
         {},
       );
-
+ 
       // Set alignment to LEFT for the rest of the receipt
       BluetoothEscposPrinter.printerAlign(BluetoothEscposPrinter.ALIGN.LEFT);
-
+ 
       BluetoothEscposPrinter.printText(
         'Customer: ' + selectedBeneficiary + '\n\r',
         {},
       );
-
+ 
       BluetoothEscposPrinter.printText('Order#: ' + orderID + '\n\r', {});
       BluetoothEscposPrinter.printText('Printed: ' + currentDate + '\n\r', {});
-
+ 
       // Print a separator line
       BluetoothEscposPrinter.printText(
         '--------------------------------\n\r',
         {},
       );
-
+ 
       BluetoothEscposPrinter.printColumn(
         [16, 7, 9], // Adjust column widths as needed
         [
@@ -96,10 +96,10 @@ const handlePrintReceipt = async (cartItems, pin, balance, assignedRetailer, ord
         ['Item', 'Qty', 'Amount'], // Column headers
         {},
       );
-
+ 
       // Print an empty line
       BluetoothEscposPrinter.printText('\n\r', {});
-
+ 
       // Loop through cart items and print each item's details, including the unit and amount
       cartItems.forEach(item => {
           const itemEng =
@@ -122,20 +122,20 @@ const handlePrintReceipt = async (cartItems, pin, balance, assignedRetailer, ord
           },
         );
       });
-
+ 
       // Print an empty line
       BluetoothEscposPrinter.printText('\n\r', {});
-
+ 
       // Calculate and print the total quantity and total amount
       let totalQuantity = 0;
       let totalAmount = 0;
       const totalItems = cartItems.length;
-
+ 
       cartItems.forEach(item => {
         totalQuantity += item.quantity;
         totalAmount += item.price * item.quantity;
       });
-
+ 
       BluetoothEscposPrinter.printColumn(
         [16, 7, 9], // Adjust column widths as needed
         [
@@ -149,13 +149,13 @@ const handlePrintReceipt = async (cartItems, pin, balance, assignedRetailer, ord
           codepage: 11,
         },
       );
-
+ 
       BluetoothEscposPrinter.printText('\n\r', {});
       BluetoothEscposPrinter.printText(
         '--------------------------------\n\r',
         {},
       );
-
+ 
       // Print additional details
       // BluetoothEscposPrinter.printText("Discount rate: 100%\n\r", {});
       BluetoothEscposPrinter.printText(
@@ -168,14 +168,13 @@ const handlePrintReceipt = async (cartItems, pin, balance, assignedRetailer, ord
       );
       let bal;
 
-      console.log(e)
-
       if (e === 0) {
+        // If e is equal to 1, subtract totalAmount from 17500
         bal = 17500 - totalAmount.toFixed(2);
       } else {
+        // Otherwise, use the original balance value
         bal = balance;
       }
-
       BluetoothEscposPrinter.printText('Voucher Balance: ' + bal + '\n\r', {});
       // Print printing timestamp and footer
       BluetoothEscposPrinter.printText(
@@ -186,7 +185,7 @@ const handlePrintReceipt = async (cartItems, pin, balance, assignedRetailer, ord
       console.log('Retailer name ', assignedRetailer[0].name);
       //const retailerName = assignedRetailer.name ? assignedRetailer.name : "n/a";
       BluetoothEscposPrinter.printText('Retailer: ' + assignedRetailer[0].name + '\n\r', {});
-
+ 
       // Check if assignedRetailer.gnDivision and assignedRetailer.dsDivision are null and provide default values
       //const gnDivision = assignedRetailer.gnDivision ? assignedRetailer.gnDivision : "n/a";
       //const dsDivision = assignedRetailer.dsDivision ? assignedRetailer.dsDivision : "n/a";
@@ -198,10 +197,10 @@ const handlePrintReceipt = async (cartItems, pin, balance, assignedRetailer, ord
         '--------------------------------\n\r',
         {},
       );
-
+ 
       // Set alignment to CENTER for the thank you message
       BluetoothEscposPrinter.printerAlign(BluetoothEscposPrinter.ALIGN.CENTER);
-
+ 
       // Print a thank you message
       BluetoothEscposPrinter.printText('Thank you for your visit\n\r', {});
       //   BluetoothEscposPrinter.printText('Voucher expires on ' + cycle.to, {});
@@ -220,5 +219,5 @@ const handlePrintReceipt = async (cartItems, pin, balance, assignedRetailer, ord
     return;
   }
 };
-
+ 
 export default handlePrintReceipt;

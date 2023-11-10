@@ -5,8 +5,6 @@ import items from '../api/comodities';
 
 const handlePrintReceipt = async (cartItems, pin, balance, assignedRetailer, orderID) => {
   
-
-  console.log(cartItems)
   const selectedBeneficiary = pin;
   try {
     const currentDate = new Date().toLocaleString('en-US', {
@@ -103,12 +101,10 @@ const handlePrintReceipt = async (cartItems, pin, balance, assignedRetailer, ord
 
       // Loop through cart items and print each item's details, including the unit and amount
       cartItems.forEach(item => {
-      console.log(cartItems)
           const itemEng =
           items.find(i => i.tam === item.name) || items.find(i => i.sin === item.name);
         const itemName =
           itemEng && itemEng.eng ? itemEng.eng : itemEng && itemEng.sin ? itemEng.sin : item.name;
-        console.log(itemName)
         const unit = item.unit || '';
         const itemquantity = Number(item.Rquantity) * Number(item.quantity);
         const amount = (item.price * item.quantity).toFixed(2); // Calculate the total amount for the item

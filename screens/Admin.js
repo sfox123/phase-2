@@ -107,7 +107,7 @@ const Admin = ({mode, setMode, retailer, setRetailer}) => {
     }
   };
 
-  const handlePrintReceipt = async e => {
+  const handlePrintCycle = async e => {
     const cycle = (await api.get(`/beneficiary/${pin}/cycle/${e}`)).data;
     console.log('Printing receipt');
     handlePrintReceipt(cycle);
@@ -205,7 +205,7 @@ const Admin = ({mode, setMode, retailer, setRetailer}) => {
                 {cycle.amount !== 17500 && (
                   <Button
                     title={`Print Receipt Cycle ${index + 1}`}
-                    onPress={() => handlePrintReceipt(index)}
+                    onPress={() => handlePrintCycle(index)}
                     style={styles.printReceiptButton}
                   />
                 )}

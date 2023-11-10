@@ -153,20 +153,13 @@ export default function CartPage({
     console.log('Order ID:', orderID);
 
     try {
-      const currentDate = new Date().toLocaleString('en-US', {
-        timeZone: 'Asia/Colombo', // Set the time zone to Sri Lanka
-      });
-
-      let cycle = '18/11/2023';
 
       setIsLoading(false);
 
-      // Use the "amount" in your code as needed
 
       try {
         console.log(assignedRetailer)
-        handlePrintReceipt(cartItems, selectedBeneficiary.id, selectedBeneficiary.amount, assignedRetailer);
-        // Set alignment to CENTER for the header
+        handlePrintReceipt(cartItems,  selectedBeneficiary.id, selectedBeneficiary.amount, assignedRetailer, orderID);
 
       } catch (warning) {
         console.log('Printer Warning', warning);

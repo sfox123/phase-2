@@ -3,13 +3,12 @@ import items from '../api/comodities';
 
 
 
-const handlePrintReceipt = async (cartItems, pin, balance, assignedRetailer) => {
+const handlePrintReceipt = async (cartItems, pin, balance, assignedRetailer, orderID) => {
   
 
   console.log(cartItems)
   const selectedBeneficiary = pin;
   try {
-    const orderID = '1111';
     const currentDate = new Date().toLocaleString('en-US', {
       timeZone: 'Asia/Colombo', // Set the time zone to Sri Lanka
     });

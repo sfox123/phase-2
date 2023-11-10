@@ -65,6 +65,7 @@ const Admin = ({mode, retailer, setMode, setRetailer}) => {
     const cycle = (await api.get(`/beneficiary/${pin}/cycle/${e}`)).data;
     const beneficiary = (await api.get(`/beneficiary/${pin}`)).data;
     console.log('Printing receipt');
+    const orderID = `REPRINT-CYCLE-${e}`
     handlePrintReceipt(cycle, pin, balance = beneficiary.amount, assignedRetailer);
     // Print receipt
   };

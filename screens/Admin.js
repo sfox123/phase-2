@@ -18,7 +18,14 @@ import {
   ScrollView,
 } from 'react-native';
 
-const Admin = ({mode, retailer, setMode, setRetailer, BenCache}) => {
+const Admin = ({
+  mode,
+  retailer,
+  setMode,
+  setRetailer,
+  BenCache,
+  setBenData,
+}) => {
   const [showScanner, setShowScanner] = useState(false);
   const [pin, setPin] = useState('');
   const [inputRetailer, setRetailerInput] = useState('');
@@ -30,6 +37,12 @@ const Admin = ({mode, retailer, setMode, setRetailer, BenCache}) => {
 
   useEffect(() => {
     console.log('Admin Page: ', BenCache);
+    BenCache.map((item, index) => {
+      if (item.uploaded == false) {
+        setOfflineBen(offlineBen => [...offlineBen, item]);
+      }
+    });
+    console.log('Offline Ben: ', offlineBen);
   }, []);
 
   const handleUpdate = async () => {
@@ -48,6 +61,7 @@ const Admin = ({mode, retailer, setMode, setRetailer, BenCache}) => {
             }
           });
           await AsyncStorage.setItem('benCache', JSON.stringify(BenCache));
+          setBenData(BenCache);
         }
         setRetailer(inputRetailer);
       }
@@ -112,8 +126,23 @@ const Admin = ({mode, retailer, setMode, setRetailer, BenCache}) => {
   };
 
   const handleSync = async () => {
-    const das = await AsyncStorage.getItem('benCache');
-    console.log(online);
+    setLoading(true);
+    offlineBen.map(async (item, index) => {
+      const cartItems = item.itemsPurchased[0].cartItems[0];
+      const id = item.id;
+      console.log(cartItems, id, retailer);
+      await api.post('/beneficiaries/updateCart', {
+        cartItems,
+        id,
+        retailer,
+      });
+    });
+    // const das = await AsyncStorage.getItem('benCache');
+    // await AsyncStorage.removeItem('benCache');
+    setLoading(false);
+    setOfflineBen([]);
+    // await AsyncStorage.setItem('benCache', JSON.stringify([]));
+    console.log(offlineBen);
   };
 
   return (
@@ -192,7 +221,7 @@ const Admin = ({mode, retailer, setMode, setRetailer, BenCache}) => {
         )}
         <View style={styles.BeneficiaryInputBox}>
           <Text style={styles.headerText}>
-            Total Offline Beneficiaries: {'213'}
+            Total Offline Beneficiaries: {offlineBen.length}
           </Text>
           <Button title="Upload" onPress={handleSync} />
           {loading && <ActivityIndicator size="large" color="#000" />}

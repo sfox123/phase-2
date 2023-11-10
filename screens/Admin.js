@@ -4,6 +4,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import api from '../api/api';
 import handlePrintReceipt from '../components/PrintReciept';
 import data from '../api/data.json';
+import retailerData from '../api/retailerData.json';
 
 import {
   View,
@@ -72,8 +73,15 @@ const Admin = ({mode, retailer, setMode, setRetailer, benData}) => {
 
   const handlePrintCycle = async e => {
     const cycle = (await api.get(`/beneficiary/${pin}/cycle/${e}`)).data;
+    const beneficiary = (await api.get(`/beneficiary/${pin}`)).data;
     console.log('Printing receipt');
-    handlePrintReceipt(cycle, pin);
+    const orderID = `REPRINT-CYCLE-${e}`;
+    handlePrintReceipt(
+      cycle,
+      pin,
+      (balance = beneficiary.amount),
+      assignedRetailer,
+    );
     // Print receipt
   };
 

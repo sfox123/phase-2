@@ -113,7 +113,7 @@ function App() {
     const interval = setInterval(() => {
       console.log('Sending printer wake up signal');
       BluetoothEnable();
-    }, 5 * 8000);
+    }, 5 * 4000);
     return () => {
       clearInterval(interval);
     };

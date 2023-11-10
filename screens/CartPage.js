@@ -276,7 +276,6 @@ export default function CartPage({
                   try {
                     // await connectPrinter(activeId);
                     // await delay(3000); // Wait for the printer connection
-                    console.log('FUCK OFF');
                   } catch (error) {
                     console.log('Printer error:', error);
                     Alert.alert(
@@ -295,7 +294,7 @@ export default function CartPage({
                   return; // Stop execution if there are no paired devices
                 }
                 try {
-                  await handlePrintReceipt();
+                  await handleReceipt();
                   setIsCheckoutSuccess(true);
                   Alert.alert('Order placed successfully!');
                 } catch (printError) {

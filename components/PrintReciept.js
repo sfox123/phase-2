@@ -1,6 +1,12 @@
 import {BluetoothEscposPrinter} from 'react-native-bluetooth-escpos-printer';
 import items from '../api/comodities';
-const handlePrintReceipt = async (cartItems, pin) => {
+
+
+
+const handlePrintReceipt = async (cartItems, pin, balance, assignedRetailer) => {
+  
+
+  console.log(cartItems)
   const selectedBeneficiary = pin;
   try {
     const orderID = '1111';
@@ -74,7 +80,7 @@ const handlePrintReceipt = async (cartItems, pin) => {
       );
 
       BluetoothEscposPrinter.printText('Order#: ' + orderID + '\n\r', {});
-      BluetoothEscposPrinter.printText('Date: ' + currentDate + '\n\r', {});
+      BluetoothEscposPrinter.printText('Printed: ' + currentDate + '\n\r', {});
 
       // Print a separator line
       BluetoothEscposPrinter.printText(
@@ -98,10 +104,12 @@ const handlePrintReceipt = async (cartItems, pin) => {
 
       // Loop through cart items and print each item's details, including the unit and amount
       cartItems.forEach(item => {
-        // const itemEng =
-        items.find(i => i.tam === item.name) ||
-          items.find(i => i.sin === item.name);
-        const itemName = itemEng ? itemEng.eng || itemEng.sin : item.name;
+      console.log(cartItems)
+          const itemEng =
+          items.find(i => i.tam === item.name) || items.find(i => i.sin === item.name);
+        const itemName =
+          itemEng && itemEng.eng ? itemEng.eng : itemEng && itemEng.sin ? itemEng.sin : item.name;
+        console.log(itemName)
         const unit = item.unit || '';
         const itemquantity = Number(item.Rquantity) * Number(item.quantity);
         const amount = (item.price * item.quantity).toFixed(2); // Calculate the total amount for the item
@@ -162,6 +170,7 @@ const handlePrintReceipt = async (cartItems, pin) => {
         'Paid: ' + totalAmount.toFixed(2) + '\n\r',
         {},
       );
+      let bal = balance - totalAmount.toFixed(2);
       BluetoothEscposPrinter.printText('Voucher Balance: ' + bal + '\n\r', {});
       // Print printing timestamp and footer
       if (!assignedRetailer) {

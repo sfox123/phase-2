@@ -20,7 +20,7 @@ const Other = ({ setCartItems }) => {
     };
 
     const handleTotalAmountChange = (value) => {
-        if (value === '' || (value >= 0 && value <= 691)) {
+        if (value === '' || (value >= 0 && value <= 17500)) {
             setTotalAmount(value);
         }
     };

@@ -82,7 +82,8 @@ const Admin = ({mode, retailer, setMode, setRetailer, BenCache}) => {
       pin,
       (balance = beneficiary.amount),
       assignedRetailer,
-      orderID
+      orderID,
+      e,
     );
     // Print receipt
   };

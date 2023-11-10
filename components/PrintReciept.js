@@ -3,7 +3,7 @@ import items from '../api/comodities';
 
 
 
-const handlePrintReceipt = async (cartItems, pin, balance, assignedRetailer, orderID) => {
+const handlePrintReceipt = async (cartItems, pin, balance, assignedRetailer, orderID, e) => {
   console.log(assignedRetailer)
   
   const selectedBeneficiary = pin;
@@ -166,7 +166,16 @@ const handlePrintReceipt = async (cartItems, pin, balance, assignedRetailer, ord
         'Paid: ' + totalAmount.toFixed(2) + '\n\r',
         {},
       );
-      let bal = balance - totalAmount.toFixed(2);
+      let bal;
+
+      console.log(e)
+
+      if (e === 0) {
+        bal = 17500 - totalAmount.toFixed(2);
+      } else {
+        bal = balance;
+      }
+
       BluetoothEscposPrinter.printText('Voucher Balance: ' + bal + '\n\r', {});
       // Print printing timestamp and footer
       BluetoothEscposPrinter.printText(

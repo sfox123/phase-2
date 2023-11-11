@@ -77,7 +77,7 @@ export default function Card({
     if (id === '27') {
       setModalVisible(false);
       const updatedPrice = parseFloat(newPrice);
-      onAddToCart(name, quantity, updatedPrice, id, unit, Rquantity);
+      onAddToCart(name, 1, updatedPrice, '27', 'LOT', 1);
     } else {
       onAddToCart(name, quantity, price, id, unit, Rquantity);
       setQuantity(initialQuantity);
@@ -102,11 +102,11 @@ export default function Card({
               <Image source={img} style={styles.modalImage} />
               <Text
                 style={styles.modalName}>{`${name} ${Rquantity}${unit}`}</Text>
-              <View style={styles.modalPriceQuantityContainer}>
+              <View style={styles.otherModalPriceQuantityContainer}>
                 <View style={styles.modalPriceContainer}>
                   <TextInput
                     style={styles.modalPriceInput}
-                    value={newPrice}
+                    value={newPrice.toString()}
                     onChangeText={handlePriceChange}
                     keyboardType="numeric"
                   />
@@ -219,6 +219,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'red',
     padding: 10,
     borderRadius: 5,
+    marginLeft: 25,
     marginTop: 10,
   },
   cartButtonText: {
@@ -260,13 +261,14 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   modalPriceInput: {
-    width: '100%',
+    flex: 1,
     borderWidth: 1,
     borderColor: '#000000',
     borderRadius: 5,
     padding: 10,
     fontSize: 16,
     fontWeight: 'bold',
+    marginRight: 10,
   },
   modalContent: {
     backgroundColor: '#ffffff',
@@ -301,6 +303,12 @@ const styles = StyleSheet.create({
   modalPriceContainer: {
     flexDirection: 'column',
     alignItems: 'center',
+  },
+  otherModalPriceQuantityContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginTop: 10,
   },
   modalPrice: {
     fontSize: 20,

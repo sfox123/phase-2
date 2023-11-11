@@ -58,7 +58,7 @@ export default function Card({
   const initialQuantity = Math.floor(max / Rquantity);
   const [quantity, setQuantity] = useState(initialQuantity);
   const [modalVisible, setModalVisible] = useState(false);
-  const [newPrice, setNewPrice] = useState(0);
+  const [newPrice, setNewPrice] = useState('');
 
   const handleIncrement = () => {
     const newQuantity = quantity + 1;

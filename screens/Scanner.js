@@ -5,8 +5,9 @@ import {check, PERMISSIONS, RESULTS, request} from 'react-native-permissions';
 import QRCodeScanner from 'react-native-qrcode-scanner';
 import api from '../api/api';
 
-const Scanner = ({setSelectedBeneficiary, retailerId}) => {
+const Scanner = ({setSelectedBeneficiary, retailerId, benData, mode}) => {
   const [hasPermission, setHasPermission] = useState(null);
+  const [loading, setLoading] = useState(false);
   const navigation = useNavigation();
 
   useEffect(() => {
@@ -28,22 +29,74 @@ const Scanner = ({setSelectedBeneficiary, retailerId}) => {
   }, []);
 
   const handleBarCodeScanned = async e => {
+    setIsLoading(true);
+    if (pin === '12345678') {
+      ToastAndroid.show(
+        'This is a dummy account to be used for training purposes only',
+        ToastAndroid.SHORT,
+      );
+    }
+
     try {
-      const beneficiary = (await api.get(`/beneficiary/${e.data}`)).data;
-      if (beneficiary.retailerAssigned === retailerId) {
-        setSelectedBeneficiary(beneficiary);
-        navigation.navigate('BeneficiaryDetails');
-      } else if (e.data == '12345678') {
-        setSelectedBeneficiary(beneficiary);
-        navigation.navigate('BeneficiaryDetails');
+      if (mode) {
+        const beneficiary = benData.find(ben => ben.id == pin);
+        if (beneficiary) {
+          if (pin === '12345678') {
+            ToastAndroid.show(
+              'This is a dummy account to be used for training purposes only',
+              ToastAndroid.SHORT,
+            );
+            setSelectedBeneficiary(beneficiary);
+            ToastAndroid.show('Logged in', ToastAndroid.SHORT);
+            navigation.navigate('BeneficiaryDetails');
+          } else {
+            setSelectedBeneficiary(beneficiary);
+            ToastAndroid.show('Logged in', ToastAndroid.SHORT);
+            navigation.navigate('BeneficiaryDetails');
+          }
+        } else {
+          Alert.alert('Beneficiary not found');
+        }
       } else {
-        Alert.alert(
-          `Beneficiary not assigned to this retailer.\nAssigned retailer: ${beneficiary.retailerAssigned}`,
-        );
+        const beneficiary = (await api.get(`/beneficiary/${e.data}`)).data;
+        if (beneficiary) {
+          console.log(`Text/PIN input is used to login. Used ID: ${pin}`);
+          console.log('APK_Assigned_retailer:', retailerId);
+          console.log('Retailer assigned:', beneficiary.retailerAssigned);
+
+          if (beneficiary.retailerAssigned == retailerId) {
+            setSelectedBeneficiary(beneficiary);
+            ToastAndroid.show('Logged in', ToastAndroid.SHORT);
+            navigation.navigate('BeneficiaryDetails');
+          } else if (beneficiary.id == '12345678') {
+            ToastAndroid.show(
+              'Skipping retailer check for test beneficiary',
+              ToastAndroid.SHORT,
+            );
+            setSelectedBeneficiary(beneficiary);
+            navigation.navigate('BeneficiaryDetails');
+          } else {
+            const beneficiaryRetailerdata = (await api.get(`/retailers`)).data;
+            const assignedRetailer = beneficiaryRetailerdata.find(
+              retailer => retailer.retailerId === beneficiary.retailerAssigned,
+            );
+
+            if (assignedRetailer) {
+              const {name, gnDivision, retailerId} = assignedRetailer;
+              Alert.alert(
+                `Beneficiary not allowed to make purchases from this retailer.\nAssigned retailer: ${name} - ${gnDivision} (${retailerId})`,
+              );
+            }
+          }
+        } else {
+          Alert.alert('Beneficiary not found');
+        }
       }
     } catch (error) {
       console.error(error);
       Alert.alert('Error finding beneficiary');
+    } finally {
+      setIsLoading(false);
     }
   };
 

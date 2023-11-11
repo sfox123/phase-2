@@ -1,10 +1,7 @@
-import React, {useState, useEffect, useCallback} from 'react';
-import {useFocusEffect} from '@react-navigation/native';
+import React, {useState, useEffect} from 'react';
 import {Alert} from 'react-native';
 import api from '../api/api';
-import {activeId} from '../App';
 import {isPrinterOk} from '../api/btprinter';
-import items from '../api/comodities';
 import retailerData from '../api/retailerData.json';
 import handlePrintReceipt from '../components/PrintReciept';
 
@@ -15,15 +12,11 @@ import {
   TouchableOpacity,
   ScrollView,
   ActivityIndicator,
-  Modal,
 } from 'react-native';
 import CheckoutItem from '../components/CheckoutItem';
 import {useNavigation, useIsFocused} from '@react-navigation/native';
-import AntDesign from 'react-native-vector-icons/AntDesign';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {StatusBar} from 'react-native';
-import {connectPrinter} from '../api/btprinter';
-import {BluetoothEscposPrinter} from 'react-native-bluetooth-escpos-printer';
 
 export default function CartPage({
   selectedBeneficiary,
@@ -63,41 +56,6 @@ export default function CartPage({
 
   const navigation = useNavigation();
   const isFocused = useIsFocused();
-
-  useFocusEffect(
-    React.useCallback(() => {
-      if (checkoutInitiated) {
-        navigation.setOptions({
-          gestureEnabled: false,
-        });
-      } else {
-        navigation.setOptions({
-          gestureEnabled: true,
-        });
-      }
-    }, [checkoutInitiated, navigation]),
-  );
-
-  useEffect(() => {
-    if (isFocused) {
-      const unsubscribe = navigation.addListener('beforeRemove', e => {
-        if (checkoutInitiated) {
-          e.preventDefault();
-          // setTimeout(() => {
-          //   if (isFocused) {
-          //   Alert.alert(
-          //     "Not allowed:",
-          //     "Transaction already processed. Please logout when done"
-          //   );}
-          // }, 3000);
-        }
-      });
-
-      return () => {
-        unsubscribe();
-      };
-    }
-  }, [checkoutInitiated, isFocused, navigation]);
 
   function generateOrderID(selectedBeneficiary) {
     // Get the current date and time
@@ -167,7 +125,7 @@ export default function CartPage({
           selectedBeneficiary.amount,
           assignedRetailer,
           orderID,
-          e = 0,
+          (e = 0),
         );
       } catch (warning) {
         console.log('Printer Warning', warning);
@@ -310,9 +268,9 @@ export default function CartPage({
   };
 
   const handleCloseSuccess = () => {
+    navigation.navigate('Home');
     setCheckoutInitiated(false);
     setIsSuccess(true);
-    navigation.navigate('Home');
     setSelectedBeneficiary && setSelectedBeneficiary(null);
     setCartItems && setCartItems([]);
   };

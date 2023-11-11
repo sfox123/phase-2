@@ -137,21 +137,28 @@ const Admin = ({
   };
   const handleSync = async () => {
     setLoading(true);
-    const promises = offlineBen.map(async (item, index) => {
-      const cartItems = item.itemsPurchased[0].cartItems;
-      const id = item.id;
-      console.log(cartItems, id, retailer);
-      const req = await api.post('/beneficiaries/updateCart', {
-        cartItems,
-        id,
-      });
-      if (req.data[0] == 'Cart updated successfully') {
+    try {
+      const promises = offlineBen.map(async (item, index) => {
+        const cartItems = item.itemsPurchased[0].cartItems;
+        const id = item.id;
+        console.log(cartItems, id, retailer);
+        const req = await api.post('/beneficiaries/updateCart', {
+          cartItems,
+          id,
+        });
         item.uploaded = true;
+        await AsyncStorage.removeItem('benCache');
         await AsyncStorage.setItem('benCache', JSON.stringify(offlineBen));
-        setBenData([]);
-      }
-      return req.data;
-    });
+        setOfflineBen([]);
+        Alert.alert('Data synced successfully');
+        setLoading(false);
+        return req.data;
+      });
+    } catch (error) {
+      console.error(error);
+      Alert.alert('Error syncing data');
+      setLoading(false);
+    }
 
     const results = await Promise.all(promises);
     console.log(results);

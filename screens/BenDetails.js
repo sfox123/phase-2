@@ -13,8 +13,7 @@ import {useNavigation, useFocusEffect} from '@react-navigation/native';
 import Card from '../components/Card';
 import CartButton from '../components/CartButton';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-import api from '../api/api';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import items from '../api/comodities';
 
 export default function BeneficiaryDetails({
   selectedBeneficiary,
@@ -29,40 +28,7 @@ export default function BeneficiaryDetails({
   const amount = selectedBeneficiary ? selectedBeneficiary.amount : 0;
   const nic = selectedBeneficiary ? selectedBeneficiary.NIC : 0;
   const lastname = selectedBeneficiary ? selectedBeneficiary.lastName : ' ';
-  const [items, setItems] = useState([]);
   const [languageModalVisible, setLanguageModalVisible] = useState(false);
-
-  // Fetch items from the API and cache them
-  useEffect(() => {
-    const fetchItems = async () => {
-      try {
-        // Check if data is cached in AsyncStorage
-        const cachedData = await AsyncStorage.getItem('cachedItems');
-
-        if (cachedData) {
-          // If cached data exists, use it
-          setItems(JSON.parse(cachedData));
-        } else {
-          // If no cached data, fetch from the API
-          const response = await api.get('/commodities');
-          const fetchedData = response.data;
-
-          // Store fetched data in state
-          setItems(fetchedData);
-
-          // Cache the fetched data in AsyncStorage for future use
-          await AsyncStorage.setItem(
-            'cachedItems',
-            JSON.stringify(fetchedData),
-          );
-        }
-      } catch (error) {
-        console.error('Error fetching items: ', error);
-      }
-    };
-
-    fetchItems();
-  }, []);
 
   const handleCartPress = () => {
     navigation.navigate('Cart');
@@ -121,6 +87,8 @@ export default function BeneficiaryDetails({
               max={item.max}
               id={item.id}
               unit={item.unit}
+              amount={amount}
+              cartTotal={cartTotal}
               image={item.image}
               navigation={navigation}
               onAddToCart={handleAddToCart}
@@ -135,6 +103,8 @@ export default function BeneficiaryDetails({
                 unit={items[index + 1].unit}
                 max={items[index + 1].max}
                 navigation={navigation}
+                amount={amount}
+                cartTotal={cartTotal}
                 image={items[index + 1].image}
                 onAddToCart={handleAddToCart}
                 exist={cartItems.some(
@@ -180,7 +150,7 @@ export default function BeneficiaryDetails({
       </View>
       <FlatList
         data={items.sort((a, b) => a.id - b.id)}
-        keyExtractor={item => item.id.toString()}
+        keyExtractor={item => item.id}
         renderItem={renderItem}
         style={styles.scrollView}
         numColumns={1}

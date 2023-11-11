@@ -243,7 +243,7 @@ const Items = [
     fixed: false,
     unit: 'LOT',
     quantity: 1,
-    id: '28',
+    id: '32',
     max: 691,
     sin: 'අනික්කුත් (එළවළු/පළතුරු)',
     eng: 'Other - Veg/Fruit',
@@ -377,7 +377,7 @@ const Items = [
     max: 240,
     price: 179,
     sin: 'මැලිබන් මාරි ',
-    id: '32',
+    id: '28',
     eng: 'Maliban Marie',
   },
 ];

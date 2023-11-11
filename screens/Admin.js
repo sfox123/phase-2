@@ -37,12 +37,21 @@ const Admin = ({
 
   useEffect(() => {
     console.log('Admin Page: ', BenCache);
+
+    // Create a new array
+    let newOfflineBen = [];
+
     BenCache.map((item, index) => {
-      if (item.uploaded == false) {
-        setOfflineBen(offlineBen => [...offlineBen, item]);
+      if (item.uploaded === false) {
+        // Add items to the new array instead of offlineBen
+        newOfflineBen.push(item);
       }
     });
-    console.log('Offline Ben: ', offlineBen);
+
+    // Set offlineBen to the new array
+    setOfflineBen(newOfflineBen);
+
+    console.log('Offline Ben: ', newOfflineBen);
   }, []);
 
   const handleUpdate = async () => {
@@ -118,30 +127,36 @@ const Admin = ({
   const handleRequestQR = async e => {
     try {
       const beneficiary = (await api.get(`/beneficiary/${e.data}`)).data;
+      setBeneficiary(beneficiary);
+      setShowScanner(false);
     } catch (error) {
       Alert.alert('Error finding beneficiary');
     }
     // Handle scanned QR code
     setShowScanner(false);
   };
-
   const handleSync = async () => {
     setLoading(true);
-    offlineBen.map(async (item, index) => {
-      const cartItems = item.itemsPurchased[0].cartItems[0];
+    const promises = offlineBen.map(async (item, index) => {
+      const cartItems = item.itemsPurchased[0].cartItems;
       const id = item.id;
       console.log(cartItems, id, retailer);
-      await api.post('/beneficiaries/updateCart', {
+      const req = await api.post('/beneficiaries/updateCart', {
         cartItems,
         id,
-        retailer,
       });
+      if (req.data[0] == 'Cart updated successfully') {
+        item.uploaded = true;
+        await AsyncStorage.setItem('benCache', JSON.stringify(offlineBen));
+        setBenData([]);
+      }
+      return req.data;
     });
-    // const das = await AsyncStorage.getItem('benCache');
-    // await AsyncStorage.removeItem('benCache');
+
+    const results = await Promise.all(promises);
+    console.log(results);
+
     setLoading(false);
-    setOfflineBen([]);
-    // await AsyncStorage.setItem('benCache', JSON.stringify([]));
     console.log(offlineBen);
   };
 

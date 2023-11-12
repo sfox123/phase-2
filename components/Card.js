@@ -14,7 +14,7 @@ import AntDesign from 'react-native-vector-icons/AntDesign';
 // import images from './Image';
 const images = {
   1: require('../assets/Commodities/rice.png'),
-  10: require('../assets/Commodities/potatoe.png'),
+  10: require('../assets/Commodities/sprats.png'),
   11: require('../assets/Commodities/tin.jpeg'),
   12: require('../assets/Commodities/egg.png'),
   13: require('../assets/Commodities/salt.png'),
@@ -30,16 +30,22 @@ const images = {
   22: require('../assets/Commodities/garlic.png'),
   23: require('../assets/Commodities/life.png'),
   24: require('../assets/Commodities/baby.png'),
-  25: require('../assets/Commodities/eva.png'),
-  26: require('../assets/Commodities/Panadol.jpg'),
-  27: require('../assets/Commodities/other.png'),
+  25: require('../assets/Commodities/vim.png'),
+  26: require('../assets/Commodities/eva.png'),
+  27: require('../assets/Commodities/Panadol.jpg'),
+  28: require('../assets/Commodities/marie.png'),
+  29: require('../assets/Commodities/matches.png'),
+  30: require('../assets/Commodities/toothpaste.png'),
+  31: require('../assets/Commodities/washingpowder.png'),
+  32: require('../assets/Commodities/other.png'),
   3: require('../assets/Commodities/rice-flour.png'),
   4: require('../assets/Commodities/tea.png'),
   5: require('../assets/Commodities/sugar.png'),
-  6: require('../assets/Commodities/onion.png'),
+  6: require('../assets/Commodities/milk-powder.png'),
   7: require('../assets/Commodities/green.png'),
   8: require('../assets/Commodities/dhal.png'),
   9: require('../assets/Commodities/chick.png'),
+
 };
 export default function Card({
   image,

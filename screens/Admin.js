@@ -100,7 +100,7 @@ const Admin = ({
     );
 
     console.log('Printing receipt');
-    const orderID = `ADMINPRINT-CYCLE-${e}`;
+    const orderID = `ADMINPRINT-CYCLE-${e + 1}`;
     handlePrintReceipt(
       cycle,
       pin,

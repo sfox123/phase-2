@@ -89,6 +89,7 @@ export default function BeneficiaryDetails({
               unit={item.unit}
               amount={amount}
               cartTotal={cartTotal}
+              fixed={item.fixed}
               image={item.image}
               navigation={navigation}
               onAddToCart={handleAddToCart}
@@ -103,6 +104,7 @@ export default function BeneficiaryDetails({
                 unit={items[index + 1].unit}
                 max={items[index + 1].max}
                 navigation={navigation}
+                fixed={items[index + 1].fixed}
                 amount={amount}
                 cartTotal={cartTotal}
                 image={items[index + 1].image}

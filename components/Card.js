@@ -18,7 +18,7 @@ const images = {
   3: require('../assets/Commodities/rice-flour.png'),
   4: require('../assets/Commodities/tea.png'),
   5: require('../assets/Commodities/sugar.png'),
-  6: require('../assets/Commodities/onion.png'),
+  6: require('../assets/Commodities/milk-powder.png'),
   7: require('../assets/Commodities/green.png'),
   8: require('../assets/Commodities/dhal.png'),
   9: require('../assets/Commodities/chick.png'),
@@ -44,8 +44,7 @@ const images = {
   29: require('../assets/Commodities/matches.png'),
   30: require('../assets/Commodities/toothpaste.png'),
   31: require('../assets/Commodities/w-powder.jpg'),
-  32: require('../assets/Commodities/m-powder.jpeg'),
-  33: require('../assets/Commodities/other.png'),
+  32: require('../assets/Commodities/other.png'),
   // Add more as needed
 };
 export default function Card({
@@ -84,10 +83,10 @@ export default function Card({
   };
 
   const handleAddToCartPress = () => {
-    if (id === '33') {
+    if (id === '32') {
       setModalVisible(false);
       const updatedPrice = parseFloat(newPrice);
-      onAddToCart(name, 1, updatedPrice, '33', 'LOT', 1);
+      onAddToCart(name, 1, updatedPrice, '32', 'LOT', 1);
     } else {
       onAddToCart(name, quantity, price, id, unit, Rquantity);
       setQuantity(initialQuantity);
@@ -112,7 +111,7 @@ export default function Card({
     {borderColor: fixed ? 'green' : 'orange', borderWidth: 2},
   ];
   let img = images[id];
-  return id === '33' ? (
+  return id === '32' ? (
     <TouchableOpacity style={otherCardStyle} disabled={exist}>
       <TouchableWithoutFeedback onPress={() => setModalVisible(false)}>
         <View style={styles.otherModalBackground}>
@@ -131,9 +130,19 @@ export default function Card({
                   />
                 </View>
                 <TouchableOpacity
-                  style={styles.cartButton}
-                  onPress={handleAddToCartPress}>
-                  <Text style={styles.cartButtonText}>Add to Cart</Text>
+                  style={[
+                    styles.cartButton,
+                    exist && styles.modalCartButtonDisabled,
+                  ]}
+                  onPress={exist ? null : handleAddToCartPress}
+                  disabled={exist}>
+                  <Text
+                    style={[
+                      styles.modalCartButtonText,
+                      exist && styles.modalCartButtonTextDisabled,
+                    ]}>
+                    Add to cart
+                  </Text>
                 </TouchableOpacity>
               </View>
             </View>
@@ -219,6 +228,9 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   otherCardContainer: {
+    display: 'flex',
+    alignSelf: 'center',
+    flexDirection: 'column',
     width: '85%',
     backgroundColor: '#ffffff',
     padding: 20,

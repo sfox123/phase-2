@@ -89,7 +89,7 @@ export default function Home() {
           </TouchableOpacity>
           <View style={styles.footer}>
             <View style={styles.footerContainer}>
-              <Text style={styles.partnerText}>Partners With</Text>
+              <Text style={styles.partnerText}>Associated With</Text>
               <View style={styles.logos}>
                 <Logo id={2} image={wfp} />
                 <Logo id={3} image={samurdhi} />

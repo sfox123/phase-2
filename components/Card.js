@@ -80,10 +80,10 @@ export default function Card({
   };
 
   const handleAddToCartPress = () => {
-    if (id === '27') {
+    if (id === '32') {
       setModalVisible(false);
       const updatedPrice = parseFloat(newPrice);
-      onAddToCart(name, 1, updatedPrice, '27', 'LOT', 1);
+      onAddToCart(name, 1, updatedPrice, '32', 'LOT', 1);
     } else {
       onAddToCart(name, quantity, price, id, unit, Rquantity);
       setQuantity(initialQuantity);
@@ -97,7 +97,7 @@ export default function Card({
     }
   };
   let img = images[id];
-  return id === '27' ? (
+  return id === '32' ? (
     <TouchableOpacity
       style={[styles.otherCardContainer, exist && styles.cardContainerDisabled]}
       disabled={exist}>

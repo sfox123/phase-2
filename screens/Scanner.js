@@ -7,7 +7,7 @@ import api from '../api/api';
 
 const Scanner = ({setSelectedBeneficiary, retailerId, benData, mode}) => {
   const [hasPermission, setHasPermission] = useState(null);
-  const [loading, setLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const navigation = useNavigation();
 
   useEffect(() => {

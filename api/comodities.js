@@ -249,15 +249,15 @@ const Items = [
     eng: 'Milk Powder',
   },
   {
-    tam: 'வேறு பொருட்கள் (காய்கறிகள்/பழங்கள்)',
+    tam: 'வேறு பொருட்கள்',
     image: 'other.png',
     fixed: false,
     unit: 'LOT',
     quantity: 1,
     id: '33',
     max: 691,
-    sin: 'අනික්කුත් (එළවළු/පළතුරු)',
-    eng: 'Other - Veg/Fruit',
+    sin: 'අනික්කුත්',
+    eng: 'Other',
   },
   {
     tam: 'அ. மாவு',

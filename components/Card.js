@@ -87,7 +87,7 @@ export default function Card({
     if (id === '33') {
       setModalVisible(false);
       const updatedPrice = parseFloat(newPrice);
-      onAddToCart(name, 1, updatedPrice, '32', 'LOT', 1);
+      onAddToCart(name, 1, updatedPrice, '33', 'LOT', 1);
     } else {
       onAddToCart(name, quantity, price, id, unit, Rquantity);
       setQuantity(initialQuantity);

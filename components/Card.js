@@ -36,7 +36,7 @@ const images = {
   28: require('../assets/Commodities/marie.png'),
   29: require('../assets/Commodities/matches.png'),
   30: require('../assets/Commodities/toothpaste.png'),
-  31: require('../assets/Commodities/washingpowder.png'),
+  31: require('../assets/Commodities/washingpowder.jpg'),
   32: require('../assets/Commodities/other.png'),
   3: require('../assets/Commodities/rice-flour.png'),
   4: require('../assets/Commodities/tea.png'),

@@ -1,5 +1,5 @@
 import React, {useState, useEffect} from 'react';
-import {Text, View, StyleSheet, Alert} from 'react-native';
+import {Text, View, StyleSheet, Alert, ToastAndroid} from 'react-native';
 import {useNavigation} from '@react-navigation/native';
 import {check, PERMISSIONS, RESULTS, request} from 'react-native-permissions';
 import QRCodeScanner from 'react-native-qrcode-scanner';
@@ -30,7 +30,8 @@ const Scanner = ({setSelectedBeneficiary, retailerId, benData, mode}) => {
 
   const handleBarCodeScanned = async e => {
     setIsLoading(true);
-    if (pin === '12345678') {
+    console.log(e.data);
+    if (e.data === '12345678') {
       ToastAndroid.show(
         'This is a dummy account to be used for training purposes only',
         ToastAndroid.SHORT,
@@ -39,9 +40,9 @@ const Scanner = ({setSelectedBeneficiary, retailerId, benData, mode}) => {
 
     try {
       if (mode) {
-        const beneficiary = benData.find(ben => ben.id == pin);
+        const beneficiary = benData.find(ben => ben.id == e.data);
         if (beneficiary) {
-          if (pin === '12345678') {
+          if (e.data === '12345678') {
             ToastAndroid.show(
               'This is a dummy account to be used for training purposes only',
               ToastAndroid.SHORT,
@@ -60,7 +61,7 @@ const Scanner = ({setSelectedBeneficiary, retailerId, benData, mode}) => {
       } else {
         const beneficiary = (await api.get(`/beneficiary/${e.data}`)).data;
         if (beneficiary) {
-          console.log(`Text/PIN input is used to login. Used ID: ${pin}`);
+          console.log(`Text/PIN input is used to login. Used ID: ${e.data}`);
           console.log('APK_Assigned_retailer:', retailerId);
           console.log('Retailer assigned:', beneficiary.retailerAssigned);
 
@@ -112,7 +113,7 @@ const Scanner = ({setSelectedBeneficiary, retailerId, benData, mode}) => {
       <QRCodeScanner
         onRead={handleBarCodeScanned}
         reactivate={true}
-        reactivateTimeout={5000}
+        reactivateTimeout={500}
         showMarker={true}
         markerStyle={{borderColor: 'white'}}
         cameraStyle={styles.cameraContainer}

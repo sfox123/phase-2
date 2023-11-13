@@ -257,7 +257,7 @@ const Items = [
     id: '33',
     max: 691,
     sin: 'අනික්කුත් (එළවළු/පළතුරු)',
-    eng: 'Other - Veg/Fruit',
+    eng: 'Other(Veg/Fruit)',
   },
   {
     tam: 'அ. மாவு',

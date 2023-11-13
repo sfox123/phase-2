@@ -25,36 +25,6 @@ export default function Pin({
   const [pin, setPin] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
-  const fetchRetailerData = async (retailerId, mode, benData) => {
-    try {
-      const assignedRetailer = retailerData.find(
-        retailer => retailer.retailerId === retailerId,
-      );
-
-      if (assignedRetailer) {
-        try {
-          console.log('PIN PAGE: ', assignedRetailer);
-          const response = await api.get(`/retailer/${assignedRetailer}`);
-          const data = response.data;
-          setRetailerData(data); // Save the data to the state
-        } catch (error) {
-          console.log('PIN PAGE: ', 'Error fetching retailer data: ', error);
-        }
-      } else {
-        console.log('PIN PAGE: ', 'Retailer not found with ID: ', retailerId);
-      }
-    } catch (error) {
-      console.log('PIN PAGE: ', 'Error fetching retailers: ', error);
-    }
-  };
-
-  // Use the effect hook to fetch retailer data when retailerId changes
-  useEffect(() => {
-    if (retailerId) {
-      fetchRetailerData(retailerId);
-    }
-  }, [retailerId]);
-
   // When the user clicks the login button
   const handleLogin = async () => {
     setIsLoading(true);

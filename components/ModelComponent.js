@@ -1,155 +1,95 @@
+// In a separate ModalComponent.js file
 import React, {useState, useContext} from 'react';
 import {
-  View,
-  Text,
-  StyleSheet,
-  Image,
-  TouchableOpacity,
   Modal,
+  View,
   TextInput,
+  TouchableOpacity,
+  Text,
   TouchableWithoutFeedback,
-  ImageBackground,
+  Image,
+  StyleSheet,
 } from 'react-native';
 import AntDesign from 'react-native-vector-icons/AntDesign';
-import ModalComponent from './ModelComponent';
-import AppContext from '../AppContext';
-// import images from './Image';
-const images = {
-  1: require('../assets/Commodities/rice.png'),
-  2: require('../assets/Commodities/wheat.png'),
-  3: require('../assets/Commodities/rice-flour.png'),
-  4: require('../assets/Commodities/tea.png'),
-  5: require('../assets/Commodities/sugar.png'),
-  6: require('../assets/Commodities/milk-powder.png'),
-  7: require('../assets/Commodities/green.png'),
-  8: require('../assets/Commodities/dhal.png'),
-  9: require('../assets/Commodities/chick.png'),
-  10: require('../assets/Commodities/sprats.png'),
-  11: require('../assets/Commodities/tin.jpeg'),
-  12: require('../assets/Commodities/egg.png'),
-  13: require('../assets/Commodities/salt.png'),
-  14: require('../assets/Commodities/coconut-oil.png'),
-  15: require('../assets/Commodities/soya.jpg'),
-  16: require('../assets/Commodities/red-chilly-powder.png'),
-  17: require('../assets/Commodities/turmeric.png'),
-  18: require('../assets/Commodities/curry.png'),
-  19: require('../assets/Commodities/dry-chilly.png'),
-  20: require('../assets/Commodities/coriander.png'),
-  21: require('../assets/Commodities/pepper.png'),
-  22: require('../assets/Commodities/garlic.png'),
-  23: require('../assets/Commodities/life.png'),
-  24: require('../assets/Commodities/baby.png'),
-  25: require('../assets/Commodities/vim.png'),
-  26: require('../assets/Commodities/eva.png'),
-  27: require('../assets/Commodities/Panadol.jpg'),
-  28: require('../assets/Commodities/marie.png'),
-  29: require('../assets/Commodities/other.png'),
-  30: require('../assets/Commodities/w-powder.jpg'),
-  31: require('../assets/Commodities/matches.png'),
-  32: require('../assets/Commodities/toothpaste.png'),
-  // Add more as needed
-};
-export default function Card({
-  image,
+
+const ModalComponent = ({
+  img,
   name,
-  price,
-  amount,
-  cartTotal,
-  onAddToCart,
-  unit,
-  max,
-  fixed,
   Rquantity,
-  exist,
+  exist = false,
+  handleDecrement,
+  handleIncrement,
+  quantity,
+  newPrice,
+  handlePriceChange,
   id,
-}) {
-  const initialQuantity = fixed ? Math.floor(max / Rquantity) : 1;
-  const [quantity, setQuantity] = useState(initialQuantity);
-  const [modalVisible, setModalVisible] = useState(false);
-  const [newPrice, setNewPrice] = useState('');
-
-  const handleIncrement = () => {
-    const newQuantity = quantity + 1;
-    if (newQuantity <= initialQuantity) {
-      setQuantity(newQuantity);
-    }
-    if (
-      !fixed &&
-      Number(price) * Number(newQuantity) <= amount - cartTotal &&
-      newQuantity <= max
-    ) {
-      setQuantity(newQuantity);
-    }
-  };
-
-  const handleDecrement = () => {
-    if (quantity > 1) {
-      setQuantity(quantity - 1);
-    }
-  };
-
-  const handleAddToCartPress = () => {
-    if (id === '29') {
-      setModalVisible(false);
-      const updatedPrice = parseFloat(newPrice);
-      onAddToCart(name, 1, updatedPrice, '29', 'LOT', 1);
-    } else {
-      onAddToCart(name, quantity, price, id, unit, Rquantity);
-      setQuantity(initialQuantity);
-      setModalVisible(false);
-    }
-  };
-
-  const handlePriceChange = text => {
-    if (Number(text) <= amount - cartTotal) {
-      setNewPrice(text);
-    }
-  };
-  const cardStyle = [
-    styles.cardContainer,
-    exist && styles.cardContainerDisabled,
-    {borderColor: fixed ? 'green' : 'orange', borderWidth: 2},
-  ];
-
-  const otherCardStyle = [
-    styles.otherCardContainer,
-    exist && styles.cardContainerDisabled,
-    {borderColor: fixed ? 'green' : 'orange', borderWidth: 2},
-  ];
-  let img = images[id];
+  unit,
+  price,
+  handleAddToCartPress,
+  modalVisible,
+  setModalVisible,
+}) => {
   return (
-    // ) : (
-    <TouchableOpacity
-      style={cardStyle}
-      onPress={() => setModalVisible(true)}
-      disabled={exist}>
-      <ImageBackground source={img} style={styles.image}>
-        <View style={styles.overlay}>
-          <Text style={styles.name}>{`${id} . ${name}`}</Text>
+    <Modal
+      animationType="fade"
+      transparent={true}
+      visible={modalVisible}
+      onRequestClose={() => setModalVisible(false)}>
+      <TouchableWithoutFeedback onPress={() => setModalVisible(false)}>
+        <View style={styles.modalBackground}>
+          <TouchableWithoutFeedback onPress={() => {}}>
+            <View style={styles.modalContent}>
+              <Image source={img} style={styles.modalImage} />
+              <Text
+                style={styles.modalName}>{`${name} ${Rquantity}${unit}`}</Text>
+              <View style={styles.modalPriceQuantityContainer}>
+                <View style={styles.modalPriceContainer}>
+                  <Text style={styles.modalPrice}>Rs {price}</Text>
+                </View>
+                {id == '29' ? (
+                  <View style={styles.modalPriceContainer}>
+                    <TextInput
+                      style={styles.modalPriceInput}
+                      value={newPrice.toString()}
+                      onChangeText={handlePriceChange}
+                      keyboardType="numeric"
+                    />
+                  </View>
+                ) : (
+                  <View style={styles.modalQuantityContainer}>
+                    <TouchableOpacity onPress={handleDecrement}>
+                      <Text style={styles.modalQuantityButton}>-</Text>
+                    </TouchableOpacity>
+                    <Text style={styles.modalQuantity}>{quantity}</Text>
+                    <TouchableOpacity onPress={handleIncrement}>
+                      <Text style={styles.modalQuantityButton}>+</Text>
+                    </TouchableOpacity>
+                  </View>
+                )}
+                <TouchableOpacity
+                  style={[
+                    styles.modalCartButton,
+                    exist && styles.modalCartButtonDisabled,
+                  ]}
+                  onPress={exist ? null : handleAddToCartPress}
+                  disabled={exist}>
+                  <Text
+                    style={[
+                      styles.modalCartButtonText,
+                      exist && styles.modalCartButtonTextDisabled,
+                    ]}>
+                    Add to cart
+                  </Text>
+                  <AntDesign name="shoppingcart" size={24} color="#ffffff" />
+                </TouchableOpacity>
+              </View>
+            </View>
+          </TouchableWithoutFeedback>
         </View>
-      </ImageBackground>
-      <ModalComponent
-        img={img}
-        name={name}
-        Rquantity={Rquantity}
-        handleDecrement={handleDecrement}
-        handleIncrement={handleIncrement}
-        quantity={quantity}
-        exist={exist}
-        unit={unit}
-        id={id}
-        price={price}
-        fixed={fixed}
-        max={max}
-        newPrice={newPrice}
-        handlePriceChange={handlePriceChange}
-        handleAddToCartPress={handleAddToCartPress}
-        modalVisible={modalVisible}
-        setModalVisible={setModalVisible}
-      />
-    </TouchableOpacity>
+      </TouchableWithoutFeedback>
+    </Modal>
   );
-}
+};
 
 const styles = StyleSheet.create({
   cardContainer: {
@@ -345,3 +285,5 @@ const styles = StyleSheet.create({
     color: '#999999',
   },
 });
+
+export default ModalComponent;

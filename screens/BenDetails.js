@@ -77,7 +77,7 @@ export default function BeneficiaryDetails({
 
   const renderItem = useCallback(
     ({item, index}) => {
-      if (index === 31) {
+      if (index === 34) {
         return (
           <View style={styles.fullWidthCard}>
             <Card
@@ -97,9 +97,9 @@ export default function BeneficiaryDetails({
             />
           </View>
         );
-      } else if (index % 2 === 0 && index < 30) {
+      } else if (index % 2 === 0) {
         return (
-          <View style={index === 31 ? {display: 'none'} : styles.cardRow}>
+          <View style={styles.cardRow}>
             <Card
               name={item[language]}
               price={item.price}

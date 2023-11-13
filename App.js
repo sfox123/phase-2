@@ -13,6 +13,7 @@ import LanguageSelectionScreen from './screens/Lang';
 import Other from './screens/Other';
 import {Alert, StatusBar} from 'react-native';
 import {DeviceEventEmitter} from 'react-native';
+import AppContext from './AppContext';
 const Stack = createStackNavigator();
 import {BluetoothManager} from 'react-native-bluetooth-escpos-printer';
 import {connectPrinter} from './api/btprinter';
@@ -25,6 +26,8 @@ function App() {
   const [retailer, setRetailer] = useState('');
   const [benData, setBenData] = useState([]);
   const [mode, setMode] = useState('');
+  const [otherModalVisible, setOtherModalVisible] = useState(false);
+  const [selectedItem, setSelectedItem] = useState(null);
 
   StatusBar.setTranslucent(true);
   StatusBar.setBackgroundColor('rgba(0, 0, 0, 0.2)');
@@ -156,104 +159,113 @@ function App() {
   }, []);
 
   return (
-    <NavigationContainer>
-      <Stack.Navigator>
-        <Stack.Screen
-          name="Home"
-          component={Home}
-          options={{headerShown: false}}
-        />
-        <Stack.Screen name="Pin">
-          {props => (
-            <Pin
-              {...props}
-              retailerId={retailer}
-              mode={mode}
-              benData={benData}
-              setSelectedBeneficiary={setSelectedBeneficiary}
-            />
-          )}
-        </Stack.Screen>
-        <Stack.Screen name="Admin">
-          {props => (
-            <Admin
-              {...props}
-              mode={mode}
-              setMode={setMode}
-              retailer={retailer}
-              BenCache={benData}
-              setBenData={setBenData}
-              setRetailer={setRetailer}
-            />
-          )}
-        </Stack.Screen>
-        <Stack.Screen name="AdminPin">
-          {props => <AdminPin {...props} />}
-        </Stack.Screen>
-        <Stack.Screen name="Status">
-          {props => (
-            <Status
-              {...props}
-              retailerId={retailer}
-              setSelectedBeneficiary={setSelectedBeneficiary}
-            />
-          )}
-        </Stack.Screen>
-        <Stack.Screen name="Scanner">
-          {props => (
-            <Scanner
-              {...props}
-              retailerId={retailer}
-              mode={mode}
-              benData={benData}
-              setSelectedBeneficiary={setSelectedBeneficiary}
-            />
-          )}
-        </Stack.Screen>
-        <Stack.Screen name="Cart">
-          {props => (
-            <CartPage
-              {...props}
-              cartItems={cartItems}
-              setSelectedBeneficiary={setSelectedBeneficiary}
-              setCartItems={setCartItems}
-              retailerId={retailer}
-              mode={mode}
-              benData={benData}
-              setBenData={setBenData}
-              selectedBeneficiary={selectedBeneficiary}
-              handleRemoveFromCart={handleRemoveFromCart}
-            />
-          )}
-        </Stack.Screen>
+    <AppContext.Provider
+      value={{
+        otherModalVisible,
+        setOtherModalVisible,
+        selectedItem,
+        setSelectedItem,
+        cartItems,
+      }}>
+      <NavigationContainer>
+        <Stack.Navigator>
+          <Stack.Screen
+            name="Home"
+            component={Home}
+            options={{headerShown: false}}
+          />
+          <Stack.Screen name="Pin">
+            {props => (
+              <Pin
+                {...props}
+                retailerId={retailer}
+                mode={mode}
+                benData={benData}
+                setSelectedBeneficiary={setSelectedBeneficiary}
+              />
+            )}
+          </Stack.Screen>
+          <Stack.Screen name="Admin">
+            {props => (
+              <Admin
+                {...props}
+                mode={mode}
+                setMode={setMode}
+                retailer={retailer}
+                BenCache={benData}
+                setBenData={setBenData}
+                setRetailer={setRetailer}
+              />
+            )}
+          </Stack.Screen>
+          <Stack.Screen name="AdminPin">
+            {props => <AdminPin {...props} />}
+          </Stack.Screen>
+          <Stack.Screen name="Status">
+            {props => (
+              <Status
+                {...props}
+                retailerId={retailer}
+                setSelectedBeneficiary={setSelectedBeneficiary}
+              />
+            )}
+          </Stack.Screen>
+          <Stack.Screen name="Scanner">
+            {props => (
+              <Scanner
+                {...props}
+                retailerId={retailer}
+                mode={mode}
+                benData={benData}
+                setSelectedBeneficiary={setSelectedBeneficiary}
+              />
+            )}
+          </Stack.Screen>
+          <Stack.Screen name="Cart">
+            {props => (
+              <CartPage
+                {...props}
+                cartItems={cartItems}
+                setSelectedBeneficiary={setSelectedBeneficiary}
+                setCartItems={setCartItems}
+                retailerId={retailer}
+                mode={mode}
+                benData={benData}
+                setBenData={setBenData}
+                selectedBeneficiary={selectedBeneficiary}
+                handleRemoveFromCart={handleRemoveFromCart}
+              />
+            )}
+          </Stack.Screen>
 
-        <Stack.Screen
-          name="BeneficiaryDetails"
-          options={{title: 'Beneficiary Details', headerShown: false}}>
-          {props => (
-            <BeneficiaryDetails
-              {...props}
-              cartItems={cartItems}
-              selectedBeneficiary={selectedBeneficiary}
-              setSelectedBeneficiary={setSelectedBeneficiary}
-              setCartItems={setCartItems}
-              setLanguage={setLanguage}
-              handleAddToCart={handleAddToCart}
-              language={language}
-              handleRemoveFromCart={handleRemoveFromCart}
-            />
-          )}
-        </Stack.Screen>
-        <Stack.Screen
-          name="LanguageSelection"
-          component={LanguageSelectionScreen}
-          options={{headerShown: false}}
-        />
-        <Stack.Screen name="Other" options={{headerShown: false}}>
-          {props => <Other {...props} setCartItems={setCartItems} />}
-        </Stack.Screen>
-      </Stack.Navigator>
-    </NavigationContainer>
+          <Stack.Screen
+            name="BeneficiaryDetails"
+            options={{title: 'Beneficiary Details', headerShown: false}}>
+            {props => (
+              <BeneficiaryDetails
+                {...props}
+                cartItems={cartItems}
+                selectedBeneficiary={selectedBeneficiary}
+                setSelectedBeneficiary={setSelectedBeneficiary}
+                setCartItems={setCartItems}
+                setLanguage={setLanguage}
+                handleAddToCart={handleAddToCart}
+                language={language}
+                handleRemoveFromCart={handleRemoveFromCart}
+              />
+            )}
+          </Stack.Screen>
+          <Stack.Screen
+            name="LanguageSelection"
+            component={LanguageSelectionScreen}
+            options={{headerShown: false}}
+          />
+          <Stack.Screen name="Other" options={{headerShown: false}}>
+            {props => <Other {...props} setCartItems={setCartItems} />}
+          </Stack.Screen>
+        </Stack.Navigator>
+      </NavigationContainer>
+    </AppContext.Provider>
   );
 }
 

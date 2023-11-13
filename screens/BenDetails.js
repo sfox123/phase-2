@@ -77,9 +77,29 @@ export default function BeneficiaryDetails({
 
   const renderItem = useCallback(
     ({item, index}) => {
-      if (index % 2 === 0) {
+      if (index === 31) {
         return (
-          <View style={styles.cardRow}>
+          <View style={styles.fullWidthCard}>
+            <Card
+              name={item[language]}
+              price={item.price}
+              Rquantity={item.quantity}
+              max={item.max}
+              id={item.id}
+              unit={item.unit}
+              amount={amount}
+              cartTotal={cartTotal}
+              fixed={item.fixed}
+              image={item.image}
+              navigation={navigation}
+              onAddToCart={handleAddToCart}
+              exist={cartItems.some(cartItem => cartItem.id === item.id)}
+            />
+          </View>
+        );
+      } else if (index % 2 === 0 && index < 30) {
+        return (
+          <View style={index === 31 ? {display: 'none'} : styles.cardRow}>
             <Card
               name={item[language]}
               price={item.price}
@@ -203,6 +223,12 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: '400',
     color: '#fff',
+  },
+  fullWidthCard: {
+    width: '100%',
+    justifyContent: 'center',
+    marginBottom: 20,
+    paddingHorizontal: 10,
   },
   lastname: {
     fontFamily: 'Roboto',

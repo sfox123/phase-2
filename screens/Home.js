@@ -12,6 +12,9 @@ import Logo from '../assets/logo';
 import {useNavigation} from '@react-navigation/native';
 import LinearGradient from 'react-native-linear-gradient';
 import {BlurView} from '@react-native-community/blur';
+import banner from '../assets/banner.png';
+import wfp from '../assets/wfp.png';
+import samurdhi from '../assets/samurdhi.png';
 
 export default function Home() {
   const navigation = useNavigation();
@@ -43,7 +46,7 @@ export default function Home() {
         blurType="light"
         blurAmount={10}>
         <LinearGradient
-          colors={['#007AFF', '#800080']}
+          colors={['#f0c11b', '#ffffff']}
           start={{x: 0, y: 0}}
           end={{x: 1, y: 1}}
           style={styles.gradient}
@@ -53,7 +56,7 @@ export default function Home() {
             styles.logoContainer,
             {transform: [{translateY: logoTranslateY}]},
           ]}>
-          <Logo />
+          <Logo image={banner} />
         </Animated.View>
         <Animated.View
           style={[
@@ -84,18 +87,27 @@ export default function Home() {
             />
             <Text style={{color: 'white', fontSize: 20}}>Enter PIN</Text>
           </TouchableOpacity>
-          <TouchableOpacity
-            style={styles.adminButton}
-            onPress={() => navigation.navigate('AdminPin')}>
-            <Icon
-              style={{marginRight: 10}}
-              size={20}
-              color="#fff"
-              name="key"
-              type="font-awesome"
-            />
-            <Text style={{color: 'white', fontSize: 15}}>Admin</Text>
-          </TouchableOpacity>
+          <View style={styles.footer}>
+            <View style={styles.footerContainer}>
+              <Text style={styles.partnerText}>Associated With</Text>
+              <View style={styles.logos}>
+                <Logo id={2} image={wfp} />
+                <Logo id={3} image={samurdhi} />
+              </View>
+            </View>
+            <TouchableOpacity
+              style={styles.adminButton}
+              onPress={() => navigation.navigate('AdminPin')}>
+              <Icon
+                style={{marginRight: 10}}
+                size={20}
+                color="#fff"
+                name="key"
+                type="font-awesome"
+              />
+              <Text style={{color: 'white', fontSize: 15}}>Admin</Text>
+            </TouchableOpacity>
+          </View>
         </Animated.View>
       </BlurView>
     </View>
@@ -103,6 +115,26 @@ export default function Home() {
 }
 
 const styles = StyleSheet.create({
+  footerContainer: {
+    alignItems: 'center',
+    flexDirection: 'column',
+  },
+  logos: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginBottom: 40,
+  },
+  partnerText: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    marginBottom: 10,
+  },
+  footer: {
+    flexDirection: 'column',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
   container: {
     flex: 1,
     justifyContent: 'center',
@@ -141,9 +173,7 @@ const styles = StyleSheet.create({
     elevation: 8,
   },
   adminButton: {
-    position: 'absolute',
-    right: 15,
-    bottom: 15,
+    display: 'inline-block',
     backgroundColor: 'red',
     width: 105,
     height: 50,

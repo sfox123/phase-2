@@ -4,6 +4,7 @@ import {useNavigation} from '@react-navigation/native';
 import {check, PERMISSIONS, RESULTS, request} from 'react-native-permissions';
 import QRCodeScanner from 'react-native-qrcode-scanner';
 import api from '../api/api';
+import retailerData from '../api/retailerData.json';
 
 const Scanner = ({setSelectedBeneficiary, retailerId, benData, mode}) => {
   const [hasPermission, setHasPermission] = useState(null);
@@ -50,10 +51,21 @@ const Scanner = ({setSelectedBeneficiary, retailerId, benData, mode}) => {
             setSelectedBeneficiary(beneficiary);
             ToastAndroid.show('Logged in', ToastAndroid.SHORT);
             navigation.navigate('BeneficiaryDetails');
-          } else {
+          } else if (beneficiary.retailerAssigned == retailerId) {
             setSelectedBeneficiary(beneficiary);
             ToastAndroid.show('Logged in', ToastAndroid.SHORT);
             navigation.navigate('BeneficiaryDetails');
+          } else if (beneficiary.retailerAssigned !== retailerId) {
+            const assignedRetailer = retailerData.find(
+              retailer => retailer.retailerId === beneficiary.retailerAssigned,
+            );
+
+            if (assignedRetailer) {
+              const {name, gnDivision, retailerId} = assignedRetailer;
+              Alert.alert(
+                `Beneficiary not allowed to make purchases from this retailer.\nAssigned retailer: ${name} - ${gnDivision} (${retailerId})`,
+              );
+            }
           }
         } else {
           Alert.alert('Beneficiary not found');

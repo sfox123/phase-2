@@ -47,10 +47,21 @@ export default function Pin({
             setSelectedBeneficiary(beneficiary);
             ToastAndroid.show('Logged in', ToastAndroid.SHORT);
             navigation.navigate('BeneficiaryDetails');
-          } else {
+          } else if (beneficiary.retailerAssigned == retailerId) {
             setSelectedBeneficiary(beneficiary);
             ToastAndroid.show('Logged in', ToastAndroid.SHORT);
             navigation.navigate('BeneficiaryDetails');
+          } else if (beneficiary.retailerAssigned !== retailerId) {
+            const assignedRetailer = retailerData.find(
+              retailer => retailer.retailerId === beneficiary.retailerAssigned,
+            );
+
+            if (assignedRetailer) {
+              const {name, gnDivision, retailerId} = assignedRetailer;
+              Alert.alert(
+                `Beneficiary not allowed to make purchases from this retailer.\nAssigned retailer: ${name} - ${gnDivision} (${retailerId})`,
+              );
+            }
           }
         } else {
           Alert.alert('Beneficiary not found');
@@ -74,8 +85,7 @@ export default function Pin({
             setSelectedBeneficiary(beneficiary);
             navigation.navigate('BeneficiaryDetails');
           } else {
-            const beneficiaryRetailerdata = (await api.get(`/retailers`)).data;
-            const assignedRetailer = beneficiaryRetailerdata.find(
+            const assignedRetailer = retailerData.find(
               retailer => retailer.retailerId === beneficiary.retailerAssigned,
             );
 

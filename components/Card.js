@@ -44,7 +44,7 @@ const images = {
   27: require('../assets/Commodities/Panadol.jpg'),
   28: require('../assets/Commodities/marie.png'),
   29: require('../assets/Commodities/other.png'),
-  30: require('../assets/Commodities/w-powder.jpg'),
+  30: require('../assets/Commodities/sun.jpg'),
   31: require('../assets/Commodities/matches.png'),
   32: require('../assets/Commodities/toothpaste.png'),
   // Add more as needed

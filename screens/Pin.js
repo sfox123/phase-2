@@ -14,6 +14,7 @@ import {
 import {useNavigation} from '@react-navigation/native';
 import api from '../api/api';
 import retailerData from '../api/retailerData.json';
+import data from '../api/data.json';
 
 export default function Pin({
   setSelectedBeneficiary,
@@ -39,6 +40,7 @@ export default function Pin({
       if (mode) {
         const beneficiary = benData.find(ben => ben.id == pin);
         if (beneficiary) {
+          console.log('WTF');
           if (pin === '12345678') {
             ToastAndroid.show(
               'This is a dummy account to be used for training purposes only',
@@ -51,20 +53,27 @@ export default function Pin({
             setSelectedBeneficiary(beneficiary);
             ToastAndroid.show('Logged in', ToastAndroid.SHORT);
             navigation.navigate('BeneficiaryDetails');
-          } else if (beneficiary.retailerAssigned !== retailerId) {
+          } else {
+            console.log('WTF');
             const assignedRetailer = retailerData.find(
               retailer => retailer.retailerId === beneficiary.retailerAssigned,
             );
-
-            if (assignedRetailer) {
-              const {name, gnDivision, retailerId} = assignedRetailer;
-              Alert.alert(
-                `Beneficiary not allowed to make purchases from this retailer.\nAssigned retailer: ${name} - ${gnDivision} (${retailerId})`,
-              );
-            }
+            const {name, gnDivision, retailerId} = assignedRetailer;
+            Alert.alert(
+              `Beneficiary not allowed to make purchases from this retailer.\nAssigned retailer: ${name} - ${gnDivision} (${retailerId})`,
+            );
           }
         } else {
-          Alert.alert('Beneficiary not found');
+          console.log('WTF');
+          const beneficiary = data.find(ben => ben.id == pin);
+          const assignedRetailer = retailerData.find(
+            retailer => retailer.retailerId == beneficiary.retailerAssigned,
+          );
+          console.log(retailerData);
+          const {name, gnDivision, retailerId} = assignedRetailer;
+          Alert.alert(
+            `Beneficiary not allowed to make purchases from this retailer.\nAssigned retailer: ${name} - ${gnDivision} (${retailerId})`,
+          );
         }
       } else {
         const beneficiary = (await api.get(`/beneficiary/${pin}`)).data;

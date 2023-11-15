@@ -9,27 +9,29 @@ const handlePrintReceipt = async (
   orderID,
   e,
 ) => {
-
-  console.log(`PRINTER: Print request received for Order ID ${orderID} for Beneficiary ${pin}`);
+  console.log(
+    `PRINTER: Print request received for Order ID ${orderID} for Beneficiary ${pin}`,
+  );
 
   let [retailerName, retailerDS, retailerGN] = ['N/A', 'N/A', 'N/A'];
   if (Array.isArray(assignedRetailer)) {
-      if (assignedRetailer.length > 0) {
-         retailerName = assignedRetailer[0].name
-         retailerDS = assignedRetailer[0].dsDivision
-         retailerGN = assignedRetailer[0].gnDivision
-
-          
-      } else {
-          console.log("Array is empty");
-      }
-  } else if (typeof assignedRetailer === 'object' && assignedRetailer !== null) {
-      // If it's an object (and not null), directly access the 'name' field
-      retailerName = assignedRetailer.name
-      retailerDS = assignedRetailer.dsDivision
-      retailerGN = assignedRetailer.gnDivision
+    if (assignedRetailer.length > 0) {
+      retailerName = assignedRetailer[0].name;
+      retailerDS = assignedRetailer[0].dsDivision;
+      retailerGN = assignedRetailer[0].gnDivision;
+    } else {
+      console.log('Array is empty');
+    }
+  } else if (
+    typeof assignedRetailer === 'object' &&
+    assignedRetailer !== null
+  ) {
+    // If it's an object (and not null), directly access the 'name' field
+    retailerName = assignedRetailer.name;
+    retailerDS = assignedRetailer.dsDivision;
+    retailerGN = assignedRetailer.gnDivision;
   } else {
-      console.log("Invalid data type for assignedRetailer");
+    console.log('Invalid data type for assignedRetailer');
   }
 
   const selectedBeneficiary = pin;
@@ -143,9 +145,11 @@ const handlePrintReceipt = async (
             : item.name;
         const unit = item.unit || '';
         const itemquantity = Number(item.Rquantity) * Number(item.quantity);
-        const amount = (item.price * item.quantity).toFixed(2); 
+        const amount = (item.price * item.quantity).toFixed(2);
 
-        console.log(`PRINTER: PRINTING ITEM - ${itemName.toString()}, QUANTITY - ${itemquantity}${unit}, AMOUNT - ${amount}`);
+        console.log(
+          `PRINTER: PRINTING ITEM - ${itemName.toString()}, QUANTITY - ${itemquantity}${unit}, AMOUNT - ${amount}`,
+        );
 
         BluetoothEscposPrinter.printColumn(
           [16, 7, 9], // Adjust column widths as needed
@@ -174,8 +178,11 @@ const handlePrintReceipt = async (
         totalAmount += item.price * item.quantity;
       });
 
-      console.log(`PRINTER: Printing TOTAL - ${totalAmount.toFixed(2)} AMOUNT - ${totalItems.toString()}`);
-
+      console.log(
+        `PRINTER: Printing TOTAL - ${totalAmount.toFixed(
+          2,
+        )} AMOUNT - ${totalItems.toString()}`,
+      );
 
       BluetoothEscposPrinter.printColumn(
         [16, 7, 9], // Adjust column widths as needed
@@ -184,7 +191,7 @@ const handlePrintReceipt = async (
           BluetoothEscposPrinter.ALIGN.CENTER,
           BluetoothEscposPrinter.ALIGN.RIGHT,
         ],
-        ['Total', totalItems.toString(), totalAmount.toFixed(2)],
+        ['Total', ' ', totalAmount.toFixed(2)],
         {
           encoding: 'UTF8',
           codepage: 11,
@@ -234,10 +241,7 @@ const handlePrintReceipt = async (
       );
 
       BluetoothEscposPrinter.printText(
-        retailerDS +
-          ' - ' +
-          retailerGN +
-          '\n\r',
+        retailerDS + ' - ' + retailerGN + '\n\r',
         {},
       );
 
@@ -260,9 +264,7 @@ const handlePrintReceipt = async (
       BluetoothEscposPrinter.printText('\n\r', {});
       BluetoothEscposPrinter.printText('\n\r', {});
 
-
       console.log(`PRINTER: Printing Done`);
-
     } catch (warning) {
       console.log('Printer Warning', warning);
     }

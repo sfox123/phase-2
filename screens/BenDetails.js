@@ -145,7 +145,7 @@ export default function BeneficiaryDetails({
     <View style={styles.container}>
       <LinearGradient colors={['#007DBC', '#6FB9E8']} style={styles.card}>
         <View style={styles.balanceRow}>
-          <Text style={styles.balanceText}>Balance: Rs. {amount}</Text>
+          <Text style={styles.balanceText}>Voucher: Rs. {amount}</Text>
           <Text style={styles.nic}>NIC: {nic}</Text>
           <MaterialCommunityIcons
             name="earth"
@@ -159,6 +159,11 @@ export default function BeneficiaryDetails({
             Cart Total: Rs. {cartTotal.toFixed(2)}
           </Text>
           <Text style={styles.lastname}>Last Name: {lastname}</Text>
+        </View>
+        <View>
+          <Text style={styles.pendingAmountText}>
+            Cart Balance: Rs. {(amount - cartTotal).toFixed(2)}
+          </Text>
         </View>
       </LinearGradient>
       <View style={styles.header}>
@@ -223,6 +228,11 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: '400',
     color: '#fff',
+  },
+  pendingAmountText: {
+    color: 'white',
+    marginTop: 5,
+    marginLeft: 10,
   },
   fullWidthCard: {
     width: '100%',

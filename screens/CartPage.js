@@ -49,6 +49,7 @@ export default function CartPage({
   const [isLoading, setIsLoading] = useState(false);
   const [loadingState, setloadingState] = useState('Processing');
   const [isSuccess, setIsSuccess] = useState(false);
+  const [retailerDocId, setRetailerDocId] = useState(null);
   const [assignedRetailer, setAssignedRetailer] = useState({name: 'baskar'});
   const [isReceiptPrinted, setIsReceiptPrinted] = useState(false);
   const [checkoutInitiated, setCheckoutInitiated] = useState(false);
@@ -89,6 +90,7 @@ export default function CartPage({
 
         if (assignedRetailer) {
           setAssignedRetailer(assignedRetailer);
+          setRetailerDocId(assignedRetailer.id);
         } else {
           console.log('Retailer not found with ID: ', retailerId);
         }
@@ -112,13 +114,6 @@ export default function CartPage({
       setIsLoading(false);
 
       try {
-        console.log(
-          cartItems,
-          selectedBeneficiary.id,
-          selectedBeneficiary.amount,
-          assignedRetailer,
-          orderID,
-        );
         handlePrintReceipt(
           cartItems,
           selectedBeneficiary.id,
@@ -213,7 +208,7 @@ export default function CartPage({
           }
         } else {
           await api
-            .post('/beneficiaries/updateCart', {cartItems, id, retailerId})
+            .post('/beneficiaries/updateCart', {cartItems, id, retailerDocId})
             .then(async response => {
               setTimeout(async () => {
                 setloadingState('Printing');

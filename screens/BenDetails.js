@@ -10,6 +10,7 @@ import {
 } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import {useNavigation, useFocusEffect} from '@react-navigation/native';
+import retailerData from '../api/retailerData.json';
 import Card from '../components/Card';
 import CartButton from '../components/CartButton';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
@@ -20,6 +21,7 @@ export default function BeneficiaryDetails({
   cartItems,
   setSelectedBeneficiary,
   setLanguage,
+  retailerId,
   language,
   setCartItems,
   handleAddToCart,
@@ -29,6 +31,7 @@ export default function BeneficiaryDetails({
   const nic = selectedBeneficiary ? selectedBeneficiary.NIC : 0;
   const lastname = selectedBeneficiary ? selectedBeneficiary.lastName : ' ';
   const [languageModalVisible, setLanguageModalVisible] = useState(false);
+  const [district, setDistrict] = useState('');
 
   const handleCartPress = () => {
     navigation.navigate('Cart');
@@ -77,27 +80,7 @@ export default function BeneficiaryDetails({
 
   const renderItem = useCallback(
     ({item, index}) => {
-      if (index === 34) {
-        return (
-          <View style={styles.fullWidthCard}>
-            <Card
-              name={item[language]}
-              price={item.price}
-              Rquantity={item.quantity}
-              max={item.max}
-              id={item.id}
-              unit={item.unit}
-              amount={amount}
-              cartTotal={cartTotal}
-              fixed={item.fixed}
-              image={item.image}
-              navigation={navigation}
-              onAddToCart={handleAddToCart}
-              exist={cartItems.some(cartItem => cartItem.id === item.id)}
-            />
-          </View>
-        );
-      } else if (index % 2 === 0) {
+      if (index % 2 === 0) {
         return (
           <View style={styles.cardRow}>
             <Card
@@ -105,8 +88,15 @@ export default function BeneficiaryDetails({
               price={item.price}
               Rquantity={item.quantity}
               max={item.max}
+              district={item.district}
+              benDs={
+                selectedBeneficiary && selectedBeneficiary.dsDivision
+                  ? selectedBeneficiary.dsDivision
+                  : ''
+              }
               id={item.id}
               unit={item.unit}
+              benDistrict={district}
               amount={amount}
               cartTotal={cartTotal}
               fixed={item.fixed}
@@ -119,12 +109,19 @@ export default function BeneficiaryDetails({
               <Card
                 name={items[index + 1][language]}
                 price={items[index + 1].price}
+                benDs={
+                  selectedBeneficiary && selectedBeneficiary.dsDivision
+                    ? selectedBeneficiary.dsDivision
+                    : ''
+                }
                 id={items[index + 1].id}
                 Rquantity={items[index + 1].quantity}
                 unit={items[index + 1].unit}
                 max={items[index + 1].max}
                 navigation={navigation}
+                district={items[index + 1].district}
                 fixed={items[index + 1].fixed}
+                benDistrict={district}
                 amount={amount}
                 cartTotal={cartTotal}
                 image={items[index + 1].image}

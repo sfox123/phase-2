@@ -2,41 +2,7 @@
   {
     "district": "Mullaitivu",
 
-    "gnDivision": "Moonrumurippu",
-
     "dsDivision": "Manthai East",
-
-    "name": "John Doe",
-
-    "retailerId": "0019",
-
-    "id": "12345"
-  },
-
-  {
-    "name": "Tom Doe",
-
-    "dsDivision": "Weli Oya",
-
-    "gnDivision": "Oya",
-
-    "retailerId": "989231232",
-
-    "id": "35456260"
-  },
-
-  {
-    "district": "Mullaitivu",
-
-    "dsDivision": "Manthai East",
-
-    "inventory": [
-      {
-        "name": "",
-
-        "stocks": ""
-      }
-    ],
 
     "status": "active",
 
@@ -176,14 +142,6 @@
 
     "dsDivision": "Thunukkai",
 
-    "inventory": [
-      {
-        "name": "",
-
-        "stocks": ""
-      }
-    ],
-
     "gnDivision": "Yogapuram Centre",
 
     "status": "active",
@@ -320,14 +278,6 @@
 
     "dsDivision": "Welioya",
 
-    "inventory": [
-      {
-        "name": "",
-
-        "stocks": ""
-      }
-    ],
-
     "gnDivision": "Ahatugaswewa",
 
     "status": "active",
@@ -420,7 +370,7 @@
 
     "gnDivision": "Nikawewa South",
 
-    "dsDivision": "Manthai East",
+    "dsDivision": "Welioya",
 
     "district": "Mullaitivu",
 

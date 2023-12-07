@@ -65,7 +65,7 @@ export default function Card({
   id,
   district,
 }) {
-  const initialQuantity = fixed ? Math.floor(max / Rquantity) : 1;
+  const initialQuantity = fixed ? max / Rquantity : 1;
   const [quantity, setQuantity] = useState(initialQuantity);
   const [modalVisible, setModalVisible] = useState(false);
   const [newPrice, setNewPrice] = useState('');
@@ -133,7 +133,7 @@ export default function Card({
     {borderColor: fixed ? 'green' : 'orange', borderWidth: 2},
   ];
   let img = images[id];
-  return (
+  return /*district !== 1 && district !== dist ? null :*/ (
     <TouchableOpacity
       style={cardStyle}
       onPress={() => setModalVisible(true)}

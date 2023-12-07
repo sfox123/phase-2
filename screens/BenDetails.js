@@ -68,24 +68,6 @@ export default function BeneficiaryDetails({
     }, [navigation]),
   );
 
-  useEffect(() => {
-    const retailers = retailerData;
-
-    const assignedRetailer = retailers.find(
-      retailer => retailer.retailerId == retailerId,
-    );
-    if (assignedRetailer) {
-      if (
-        assignedRetailer.dsDivision == 'Manthai East' ||
-        assignedRetailer.dsDivision == 'Thunukkai'
-      ) {
-        setDistrict(2);
-      } else if (assignedRetailer.dsDivision == 'Welioya') {
-        setDistrict(3);
-      }
-    }
-  }, [retailerId, district]);
-
   const handleLanguageChange = lang => {
     setLanguage(lang);
     setLanguageModalVisible(false);
@@ -107,7 +89,11 @@ export default function BeneficiaryDetails({
               Rquantity={item.quantity}
               max={item.max}
               district={item.district}
-              benDs={selectedBeneficiary.dsDivision}
+              benDs={
+                selectedBeneficiary && selectedBeneficiary.dsDivision
+                  ? selectedBeneficiary.dsDivision
+                  : ''
+              }
               id={item.id}
               unit={item.unit}
               benDistrict={district}
@@ -123,7 +109,11 @@ export default function BeneficiaryDetails({
               <Card
                 name={items[index + 1][language]}
                 price={items[index + 1].price}
-                benDs={selectedBeneficiary.dsDivision}
+                benDs={
+                  selectedBeneficiary && selectedBeneficiary.dsDivision
+                    ? selectedBeneficiary.dsDivision
+                    : ''
+                }
                 id={items[index + 1].id}
                 Rquantity={items[index + 1].quantity}
                 unit={items[index + 1].unit}

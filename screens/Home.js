@@ -116,6 +116,8 @@ export default function Home({retailerId}) {
               />
               <Text style={{color: 'white', fontSize: 15}}>Admin</Text>
             </TouchableOpacity>
+          </View>
+          <View>
             <Text style={{marginTop: 10, color: 'black', fontSize: 15}}>
               {retailer}
             </Text>
@@ -176,6 +178,7 @@ const styles = StyleSheet.create({
     height: 80,
     display: 'flex',
     flexDirection: 'row',
+    marginTop: 50,
     justifyContent: 'center',
     marginBottom: 20,
     shadowColor: '#000',

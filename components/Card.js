@@ -25,14 +25,14 @@ const images = {
   8: require('../assets/Commodities/milk-powder.png'),
   9: require('../assets/Commodities/green.png'),
   10: require('../assets/Commodities/dhal.png'),
-  11: require('../assets/Commodities/chick.png'),
-  12: require('../assets/Commodities/sprats.png'),
-  13: require('../assets/Commodities/tin.jpeg'),
-  14: require('../assets/Commodities/egg.png'),
-  15: require('../assets/Commodities/salt.png'),
-  16: require('../assets/Commodities/coconut-oil.png'),
-  17: require('../assets/Commodities/soya.jpg'),
-  18: require('../assets/Commodities/red-chilly-powder.png'),
+  11: require('../assets/Commodities/weli-dhal.png'),
+  12: require('../assets/Commodities/chick.png'),
+  13: require('../assets/Commodities/sprats.png'),
+  14: require('../assets/Commodities/salt.png'),
+  15: require('../assets/Commodities/coconut-oil.png'),
+  16: require('../assets/Commodities/soya.jpg'),
+  17: require('../assets/Commodities/red-chilly-powder.png'),
+  18: require('../assets/Commodities/weli-chilly-powder.png'),
   19: require('../assets/Commodities/turmeric.png'),
   20: require('../assets/Commodities/curry.png'),
   21: require('../assets/Commodities/dry-chilly.png'),
@@ -118,11 +118,12 @@ export default function Card({
   ];
 
   useEffect(() => {
-    console.log(benDs);
     if (benDs === 'Manthai East' || benDs === 'Thunukkai') {
       setDist(2);
-    } else {
+    } else if (benDs === 'Welioya') {
       setDist(3);
+    } else {
+      setDist(1);
     }
   }, []);
 

@@ -1,5 +1,5 @@
 // In a separate ModalComponent.js file
-import React, {useState, useContext} from 'react';
+import React, {useState, useContext, useEffect} from 'react';
 import {
   Modal,
   View,
@@ -21,14 +21,19 @@ const ModalComponent = ({
   handleIncrement,
   quantity,
   newPrice,
+  district,
   handlePriceChange,
   id,
   unit,
+  benDistrict,
   price,
   handleAddToCartPress,
   modalVisible,
   setModalVisible,
 }) => {
+  useEffect(() => {
+    console.log(newPrice === '');
+  }, []);
   return (
     <Modal
       animationType="fade"
@@ -46,7 +51,7 @@ const ModalComponent = ({
                 <View style={styles.modalPriceContainer}>
                   <Text style={styles.modalPrice}>Rs {price}</Text>
                 </View>
-                {id == '29' ? (
+                {id == '26' ? (
                   <View style={styles.modalPriceContainer}>
                     <TextInput
                       style={styles.modalPriceInput}
@@ -70,13 +75,19 @@ const ModalComponent = ({
                   style={[
                     styles.modalCartButton,
                     exist && styles.modalCartButtonDisabled,
+                    id == '26' &&
+                      newPrice === '' &&
+                      styles.modalCartButtonDisabled,
                   ]}
                   onPress={exist ? null : handleAddToCartPress}
-                  disabled={exist}>
+                  disabled={exist || (id == '26' && newPrice === '')}>
                   <Text
                     style={[
                       styles.modalCartButtonText,
                       exist && styles.modalCartButtonTextDisabled,
+                      id == '26' &&
+                        newPrice === '' &&
+                        styles.modalCartButtonTextDisabled,
                     ]}>
                     Add to cart
                   </Text>

@@ -169,11 +169,10 @@ function App() {
       }}>
       <NavigationContainer>
         <Stack.Navigator>
-          <Stack.Screen
-            name="Home"
-            component={Home}
-            options={{headerShown: false}}
-          />
+          <Stack.Screen name="Home" options={{headerShown: false}}>
+            {props => <Home {...props} retailerId={retailer} />}
+          </Stack.Screen>
+
           <Stack.Screen name="Pin">
             {props => (
               <Pin
@@ -250,6 +249,7 @@ function App() {
                 setCartItems={setCartItems}
                 setLanguage={setLanguage}
                 handleAddToCart={handleAddToCart}
+                retailerId={retailer}
                 language={language}
                 handleRemoveFromCart={handleRemoveFromCart}
               />

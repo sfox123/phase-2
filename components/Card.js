@@ -1,4 +1,4 @@
-import React, {useState, useContext} from 'react';
+import React, {useState, useEffect, useContext} from 'react';
 import {
   View,
   Text,
@@ -15,38 +15,37 @@ import ModalComponent from './ModelComponent';
 import AppContext from '../AppContext';
 // import images from './Image';
 const images = {
-  1: require('../assets/Commodities/rice.png'),
-  2: require('../assets/Commodities/wheat.png'),
-  3: require('../assets/Commodities/rice-flour.png'),
-  4: require('../assets/Commodities/tea.png'),
-  5: require('../assets/Commodities/sugar.png'),
-  6: require('../assets/Commodities/milk-powder.png'),
-  7: require('../assets/Commodities/green.png'),
-  8: require('../assets/Commodities/dhal.png'),
-  9: require('../assets/Commodities/chick.png'),
-  10: require('../assets/Commodities/sprats.png'),
-  11: require('../assets/Commodities/tin.jpeg'),
-  12: require('../assets/Commodities/egg.png'),
-  13: require('../assets/Commodities/salt.png'),
-  14: require('../assets/Commodities/coconut-oil.png'),
-  15: require('../assets/Commodities/soya.jpg'),
-  16: require('../assets/Commodities/red-chilly-powder.png'),
-  17: require('../assets/Commodities/turmeric.png'),
-  18: require('../assets/Commodities/curry.png'),
-  19: require('../assets/Commodities/dry-chilly.png'),
-  20: require('../assets/Commodities/coriander.png'),
-  21: require('../assets/Commodities/pepper.png'),
-  22: require('../assets/Commodities/garlic.png'),
-  23: require('../assets/Commodities/life.png'),
-  24: require('../assets/Commodities/baby.png'),
-  25: require('../assets/Commodities/vim.png'),
-  26: require('../assets/Commodities/eva.png'),
-  27: require('../assets/Commodities/Panadol.jpg'),
-  28: require('../assets/Commodities/marie.png'),
-  29: require('../assets/Commodities/other.png'),
-  30: require('../assets/Commodities/sun.jpg'),
+  1: require('../assets/Commodities/red-rice.png'),
+  2: require('../assets/Commodities/w-rice.png'),
+  3: require('../assets/Commodities/nood.png'),
+  4: require('../assets/Commodities/wheat.png'),
+  5: require('../assets/Commodities/red-r-floor.png'),
+  6: require('../assets/Commodities/tea.png'),
+  7: require('../assets/Commodities/sugar.png'),
+  8: require('../assets/Commodities/milk-powder.png'),
+  9: require('../assets/Commodities/green.png'),
+  10: require('../assets/Commodities/dhal.png'),
+  11: require('../assets/Commodities/chick.png'),
+  12: require('../assets/Commodities/sprats.png'),
+  13: require('../assets/Commodities/tin.jpeg'),
+  14: require('../assets/Commodities/egg.png'),
+  15: require('../assets/Commodities/salt.png'),
+  16: require('../assets/Commodities/coconut-oil.png'),
+  17: require('../assets/Commodities/soya.jpg'),
+  18: require('../assets/Commodities/red-chilly-powder.png'),
+  19: require('../assets/Commodities/turmeric.png'),
+  20: require('../assets/Commodities/curry.png'),
+  21: require('../assets/Commodities/dry-chilly.png'),
+  22: require('../assets/Commodities/coriander.png'),
+  23: require('../assets/Commodities/pepper.png'),
+  24: require('../assets/Commodities/garlic.png'),
+  25: require('../assets/Commodities/life.png'),
+  26: require('../assets/Commodities/other.png'),
+  27: require('../assets/Commodities/baby.png'),
+  28: require('../assets/Commodities/vim.png'),
+  29: require('../assets/Commodities/eva.png'),
+  30: require('../assets/Commodities/marie.png'),
   31: require('../assets/Commodities/matches.png'),
-  32: require('../assets/Commodities/toothpaste.png'),
   // Add more as needed
 };
 export default function Card({
@@ -54,7 +53,9 @@ export default function Card({
   name,
   price,
   amount,
+  benDistrict,
   cartTotal,
+  benDs,
   onAddToCart,
   unit,
   max,
@@ -62,12 +63,13 @@ export default function Card({
   Rquantity,
   exist,
   id,
+  district,
 }) {
   const initialQuantity = fixed ? Math.floor(max / Rquantity) : 1;
   const [quantity, setQuantity] = useState(initialQuantity);
   const [modalVisible, setModalVisible] = useState(false);
   const [newPrice, setNewPrice] = useState('');
-
+  const [dist, setDist] = useState('');
   const handleIncrement = () => {
     const newQuantity = quantity + 1;
     if (newQuantity <= initialQuantity) {
@@ -89,10 +91,10 @@ export default function Card({
   };
 
   const handleAddToCartPress = () => {
-    if (id === '29') {
+    if (id === '26') {
       setModalVisible(false);
       const updatedPrice = parseFloat(newPrice);
-      onAddToCart(name, 1, updatedPrice, '29', 'LOT', 1);
+      onAddToCart(name, 1, updatedPrice, '26', 'LOT', 1);
     } else {
       onAddToCart(name, quantity, price, id, unit, Rquantity);
       setQuantity(initialQuantity);
@@ -107,9 +109,22 @@ export default function Card({
   };
   const cardStyle = [
     styles.cardContainer,
-    exist && styles.cardContainerDisabled,
+    exist
+      ? styles.cardContainerDisabled
+      : district !== 1 && district !== dist
+      ? styles.cardContainerDisabled
+      : false,
     {borderColor: fixed ? 'green' : 'orange', borderWidth: 2},
   ];
+
+  useEffect(() => {
+    console.log(benDs);
+    if (benDs === 'Manthai East' || benDs === 'Thunukkai') {
+      setDist(2);
+    } else {
+      setDist(3);
+    }
+  }, []);
 
   const otherCardStyle = [
     styles.otherCardContainer,
@@ -118,11 +133,10 @@ export default function Card({
   ];
   let img = images[id];
   return (
-    // ) : (
     <TouchableOpacity
       style={cardStyle}
       onPress={() => setModalVisible(true)}
-      disabled={exist}>
+      disabled={exist || (district !== 1 && district !== dist)}>
       <ImageBackground source={img} style={styles.image}>
         <View style={styles.overlay}>
           <Text style={styles.name}>{`${id} . ${name}`}</Text>
@@ -136,7 +150,9 @@ export default function Card({
         handleIncrement={handleIncrement}
         quantity={quantity}
         exist={exist}
+        district={district}
         unit={unit}
+        benDistrict={benDistrict}
         id={id}
         price={price}
         fixed={fixed}

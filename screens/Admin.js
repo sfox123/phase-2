@@ -2,6 +2,7 @@ import React, {useState, useEffect} from 'react';
 import QRCodeScanner from 'react-native-qrcode-scanner';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import api from '../api/api';
+import {Picker} from '@react-native-picker/picker';
 import handlePrintReceipt from '../components/PrintReciept';
 import data from '../api/data.json';
 import retailerData from '../api/retailerData.json';
@@ -34,6 +35,31 @@ const Admin = ({
   const [offlineBen, setOfflineBen] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [selectedDsDivision, setSelectedDsDivision] = useState(null);
+  const [selectedGnDivision, setSelectedGnDivision] = useState(null);
+  const [selectedRetailer, setSelectedRetailer] = useState(null);
+
+  const dsDivisions = [...new Set(retailerData.map(item => item.dsDivision))];
+  const gnDivisions = selectedDsDivision
+    ? retailerData
+        .filter(item => item.dsDivision === selectedDsDivision)
+        .map(item => item.gnDivision)
+    : [];
+
+  const handleDsDivisionChange = dsDivision => {
+    setSelectedDsDivision(dsDivision);
+    setSelectedGnDivision(null);
+    setSelectedRetailer(null);
+  };
+  const handleGnDivisionChange = gnDivision => {
+    setSelectedGnDivision(gnDivision);
+    const retailer = retailerData.find(
+      item =>
+        item.dsDivision === selectedDsDivision &&
+        item.gnDivision === gnDivision,
+    );
+    setSelectedRetailer(retailer);
+  };
 
   useEffect(() => {
     console.log('Admin Page: ', BenCache);
@@ -56,15 +82,15 @@ const Admin = ({
 
   const handleUpdate = async () => {
     // Update retailer ID
+    console.log(selectedRetailer);
     const BenCache = [];
     try {
       if (retailer !== inputRetailer) {
         await AsyncStorage.removeItem('retailer');
-        await AsyncStorage.setItem('retailer', inputRetailer);
-        setRetailer(inputRetailer);
+        await AsyncStorage.setItem('retailer', selectedRetailer.retailerId);
         if (online) {
           data.map(async (item, index) => {
-            if (item.retailerAssigned == inputRetailer) {
+            if (item.retailerAssigned == selectedRetailer.retailerId) {
               BenCache.push(item);
               console.log(item);
             }
@@ -72,7 +98,7 @@ const Admin = ({
           await AsyncStorage.setItem('benCache', JSON.stringify(BenCache));
           setBenData(BenCache);
         }
-        setRetailer(inputRetailer);
+        setRetailer(selectedRetailer.retailerId);
       }
       if (online === true) {
         setMode(online);
@@ -147,23 +173,22 @@ const Admin = ({
           id,
         });
         item.uploaded = true;
-        await AsyncStorage.removeItem('benCache');
-        await AsyncStorage.setItem('benCache', JSON.stringify(offlineBen));
-        setOfflineBen([]);
-        Alert.alert('Data synced successfully');
-        setLoading(false);
         return req.data;
       });
+
+      const results = await Promise.all(promises);
+      console.log(results);
+
+      await AsyncStorage.removeItem('benCache');
+      await AsyncStorage.setItem('benCache', JSON.stringify(offlineBen));
+      setOfflineBen([]);
+      Alert.alert('Data synced successfully');
     } catch (error) {
       console.error(error);
       Alert.alert('Error syncing data');
+    } finally {
       setLoading(false);
     }
-
-    const results = await Promise.all(promises);
-    console.log(results);
-
-    setLoading(false);
     console.log(offlineBen);
   };
 
@@ -177,14 +202,32 @@ const Admin = ({
           <Switch value={online} onValueChange={setOnline} />
         </View>
         <View style={styles.BeneficiaryInputBox}>
-          <TextInput
-            style={styles.input}
-            value={inputRetailer}
-            onChangeText={setRetailerInput}
-            placeholder={retailer !== null ? retailer : 'Enter Retailer ID'}
-          />
-          <Button title="Update" onPress={handleUpdate} />
+          <Picker
+            selectedValue={selectedDsDivision}
+            onValueChange={handleDsDivisionChange}>
+            {dsDivisions.map(dsDivision => (
+              <Picker.Item
+                key={dsDivision}
+                label={dsDivision}
+                value={dsDivision}
+              />
+            ))}
+          </Picker>
 
+          {selectedDsDivision && (
+            <Picker
+              selectedValue={selectedGnDivision}
+              onValueChange={handleGnDivisionChange}>
+              {gnDivisions.map(gnDivision => (
+                <Picker.Item
+                  key={gnDivision}
+                  label={gnDivision}
+                  value={gnDivision}
+                />
+              ))}
+            </Picker>
+          )}
+          <Button title="Update" onPress={handleUpdate} />
           <Text style={styles.headerText}>Find Beneficiary</Text>
           <View style={{marginBottom: 20}}>
             <TextInput

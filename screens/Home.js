@@ -10,23 +10,32 @@ import {
 import Icon from 'react-native-vector-icons/AntDesign';
 import Logo from '../assets/logo';
 import {useNavigation} from '@react-navigation/native';
+import retailerData from '../api/retailerData.json';
 import LinearGradient from 'react-native-linear-gradient';
 import {BlurView} from '@react-native-community/blur';
 import banner from '../assets/banner.png';
 import wfp from '../assets/wfp.png';
 import samurdhi from '../assets/samurdhi.png';
 
-export default function Home() {
+export default function Home({retailerId}) {
   const navigation = useNavigation();
   const [animation] = useState(new Animated.Value(0));
-
+  const [retailer, setRetailer] = useState('UNDEFINED');
   useEffect(() => {
+    const retailers = retailerData;
     Animated.timing(animation, {
       toValue: 1,
       duration: 1000,
       useNativeDriver: true,
     }).start();
-  }, []);
+
+    const assignedRetailer = retailers.find(
+      retailer => retailer.retailerId === retailerId,
+    );
+    if (assignedRetailer) {
+      setRetailer(assignedRetailer.gnDivision);
+    }
+  }, [retailerId]);
 
   const logoTranslateY = animation.interpolate({
     inputRange: [0, 1],
@@ -107,6 +116,12 @@ export default function Home() {
               />
               <Text style={{color: 'white', fontSize: 15}}>Admin</Text>
             </TouchableOpacity>
+            <Text style={{marginTop: 10, color: 'black', fontSize: 15}}>
+              {retailer}
+            </Text>
+            <Text style={{marginTop: 10, color: 'black', fontSize: 15}}>
+              Beta v1.3.0
+            </Text>
           </View>
         </Animated.View>
       </BlurView>

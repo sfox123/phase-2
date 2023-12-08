@@ -23,7 +23,7 @@ const Items = [
     price: 225,
     sin: 'සහල්',
     id: '2',
-    eng: 'Rice (Red)',
+    eng: 'Rice',
   },
   {
     tam: 'ஙூடில்',
@@ -133,7 +133,7 @@ const Items = [
     tam: 'பருப்பு',
     image: 'dhal.png',
     fixed: true,
-    unit: 'G',
+    unit: 'KG',
     sin: 'මයිසූර් පරිප්පු',
     id: '11',
     eng: 'Red Dhal',
